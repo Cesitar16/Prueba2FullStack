@@ -1,0 +1,15 @@
+# Archivos de IDE (IntelliJ, VSCode)
+.idea/
+*.iml
+.vscode/
+
+# Archivos de compilación de Maven/Spring Boot
+target/
+*.jar
+*.war
+
+# Logs
+*.log
+
+# Archivos de sistema
+.DS_Store
