@@ -1,0 +1,432 @@
+/* ===========================================
+   🌿 ESTILOS BASE – Descansos del Recuerdo SPA
+   =========================================== */
+
+:root {
+  --color-principal: #5a4634; /* tono madera */
+  --color-secundario: #d4af37; /* dorado */
+  --color-fondo: #f9f7f3;
+  --color-texto: #333;
+  --color-muted: #6c757d;
+  --radius-base: 12px;
+  --sombra-base: 0 3px 6px rgba(0, 0, 0, 0.1);
+  --transicion: all 0.3s ease;
+}
+
+body {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-principal);
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-principal);
+  transition: var(--transicion);
+}
+
+a:hover {
+  color: var(--color-secundario);
+}
+
+/* ===========================================
+   🧭 NAVBAR
+   =========================================== */
+
+.navbar-custom {
+  background-color: var(--color-principal);
+  box-shadow: var(--sombra-base);
+}
+
+.navbar-brand {
+  color: var(--color-secundario) !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.nav-link {
+  color: #f8f9fa !important;
+  margin-right: 15px;
+  transition: var(--transicion);
+}
+
+.nav-link:hover {
+  color: var(--color-secundario) !important;
+}
+
+.btn-logout {
+  background-color: var(--color-secundario);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 12px;
+  transition: var(--transicion);
+}
+
+.btn-logout:hover {
+  background-color: #b9962f;
+}
+
+/* ===========================================
+   💀 CATÁLOGO DE URNAS
+   =========================================== */
+
+.titulo-seccion {
+  color: var(--color-principal);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-section {
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.6),
+      rgba(255, 255, 255, 0.8)
+    ),
+    url("/src/assets/img/Imagen1Titulo.jpg") center/cover no-repeat;
+  padding: 3rem 1rem;
+  border-radius: var(--radius-base);
+  text-align: center;
+}
+
+.hero-section h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-principal);
+}
+
+.hero-section p {
+  font-size: 1.1rem;
+  color: var(--color-muted);
+}
+
+/* --- Tarjetas de urnas --- */
+
+.product-card {
+  border: none;
+  border-radius: var(--radius-base);
+  background-color: #fff;
+  box-shadow: var(--sombra-base);
+  transition: var(--transicion);
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.product-card img {
+  height: 230px;
+  object-fit: cover;
+  border-top-left-radius: var(--radius-base);
+  border-top-right-radius: var(--radius-base);
+}
+
+.card-title {
+  color: var(--color-principal);
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 10px;
+}
+
+.btn-outline-primary {
+  color: var(--color-principal);
+  border-color: var(--color-principal);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--color-principal);
+  color: #fff;
+}
+
+/* ===========================================
+   🛒 CARRITO MODAL
+   =========================================== */
+
+.carrito-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.carrito-item img {
+  width: 55px;
+  height: 55px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.carrito-total {
+  font-weight: 700;
+  color: var(--color-principal);
+}
+
+.btn-comprar {
+  background-color: var(--color-secundario);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: var(--transicion);
+}
+
+.btn-comprar:hover {
+  background-color: #b28e27;
+}
+
+/* ===========================================
+   🧾 MODAL DE URNA DETALLE
+   =========================================== */
+
+.modal-header {
+  background-color: var(--color-principal) !important;
+}
+
+.modal-title {
+  color: #fff;
+}
+
+.modal-body img {
+  border-radius: 10px;
+  box-shadow: var(--sombra-base);
+}
+
+.modal-body p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.input-group-text {
+  background-color: var(--color-principal);
+  color: #fff;
+}
+
+/* ===========================================
+   📊 DASHBOARD Y TABLAS ADMIN
+   =========================================== */
+
+.table {
+  background-color: #fff;
+  border-radius: var(--radius-base);
+  overflow: hidden;
+  box-shadow: var(--sombra-base);
+}
+
+.table thead {
+  background-color: var(--color-principal);
+  color: #fff;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f2f0eb;
+}
+
+.btn {
+  border-radius: 8px !important;
+  transition: var(--transicion);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+/* ===========================================
+   🌎 NOSOTROS
+   =========================================== */
+
+.text-muted {
+  color: var(--color-muted) !important;
+}
+
+.bi {
+  color: var(--color-secundario);
+}
+
+section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-base);
+}
+
+/* ===========================================
+   📞 FOOTER
+   =========================================== */
+
+footer {
+  background-color: var(--color-principal);
+  color: #f8f9fa;
+  padding: 1.5rem 0;
+  text-align: center;
+  box-shadow: var(--sombra-base);
+}
+
+footer a {
+  color: var(--color-secundario);
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+/* ===========================================
+   ⚠️ 404 PAGE
+   =========================================== */
+
+.display-1 {
+  font-size: 6rem;
+  color: var(--color-secundario);
+}
+
+/* ===========================================
+   🔍 FILTROS Y FORMULARIOS
+   =========================================== */
+
+.filter-panel input {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+form label {
+  color: var(--color-principal);
+  font-weight: 500;
+}
+
+form .form-control {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: var(--transicion);
+}
+
+form .form-control:focus {
+  border-color: var(--color-secundario);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===========================================
+   🖥️ RESPONSIVE DESIGN
+   =========================================== */
+
+@media (max-width: 992px) {
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+
+  .product-card img {
+    height: 200px;
+  }
+
+  .display-1 {
+    font-size: 4.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .titulo-seccion {
+    font-size: 1.4rem;
+  }
+
+  .product-card img {
+    height: 180px;
+  }
+
+  footer {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 1.6rem;
+  }
+
+  .hero-section p {
+    font-size: 0.95rem;
+  }
+}
+
+/* NAVBAR visible (no translúcida) */
+.navbar-custom {
+  background-color: #f8f9fa !important; /* barra clara sólida */
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  backdrop-filter: none; /* evita transparencia */
+}
+.navbar-custom .navbar-brand { color: var(--color-principal) !important; }
+.navbar-custom .nav-link { color: #333 !important; }
+.navbar-custom .nav-link:hover { color: var(--color-principal) !important; }
+
+/* separa contenido si usas fixed-top */
+body { padding-top: 70px; }
+
+/* HERO (encabezado del catálogo) */
+.hero-section {
+  background: linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.8)),
+              url("/src/assets/img/Imagen1Titulo.jpg") center/cover no-repeat;
+  padding: 3rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+}
+.hero-section h1 { font-family: "Playfair Display", serif; font-size: 2.6rem; }
+.hero-section p  { color: var(--color-muted); }
+
+/* TARJETA DE FILTROS */
+.filter-card {
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 1.2rem;
+  border: 1px solid #ececec;
+}
+.filter-card .form-label { font-weight: 600; color: var(--color-principal); }
+
+/* BOTÓN FLOTANTE CARRITO */
+.floating-cart-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 1100;
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-principal);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  display: grid;
+  place-items: center;
+  transition: transform .2s ease, background .2s ease;
+}
+.floating-cart-btn:hover {
+  background: var(--color-secundario);
+  transform: translateY(-2px);
+}
+.floating-cart-btn i { font-size: 1.3rem; }

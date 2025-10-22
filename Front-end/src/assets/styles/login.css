@@ -1,0 +1,243 @@
+/* ===========================================
+   🔐 LOGIN – Descansos del Recuerdo SPA
+   =========================================== */
+
+:root {
+  --color-principal: #5a4634; /* madera */
+  --color-secundario: #d4af37; /* dorado */
+  --color-fondo: #f9f7f3;
+  --color-texto: #333;
+  --radius-base: 12px;
+  --sombra-base: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --transicion: all 0.3s ease;
+  --fuente: "Poppins", "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fuente);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  height: 100vh;
+}
+
+/* ===========================================
+   🧭 CONTENEDOR PRINCIPAL
+   =========================================== */
+
+.login-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===========================================
+   🌅 SECCIÓN IZQUIERDA (PRESENTACIÓN)
+   =========================================== */
+
+.login-left {
+  flex: 1;
+  background: linear-gradient(
+      rgba(90, 70, 52, 0.85),
+      rgba(90, 70, 52, 0.85)
+    ),
+    url("/src/assets/img/Imagen1Titulo.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  padding: 3rem;
+  position: relative;
+}
+
+.login-left-content {
+  max-width: 420px;
+}
+
+.brand-logo {
+  font-size: 4rem;
+  color: var(--color-secundario);
+  margin-bottom: 1rem;
+}
+
+.brand-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.brand-subtitle {
+  font-size: 1rem;
+  color: #e8e6e0;
+  margin-top: 0.8rem;
+  line-height: 1.5;
+}
+
+.decorative-line {
+  margin: 2rem auto 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-secundario);
+  border-radius: 3px;
+}
+
+/* ===========================================
+   📋 SECCIÓN DERECHA (FORMULARIO)
+   =========================================== */
+
+.login-right {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3rem;
+  box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-title {
+  color: var(--color-principal);
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+.login-subtitle {
+  color: var(--color-muted);
+  font-size: 1rem;
+}
+
+form {
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.form-floating label {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.form-floating input {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 12px;
+  font-size: 1rem;
+  transition: var(--transicion);
+}
+
+.form-floating input:focus {
+  border-color: var(--color-secundario);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.3);
+  outline: none;
+}
+
+/* ===========================================
+   🔒 BOTÓN DE INGRESO
+   =========================================== */
+
+.btn-login {
+  background-color: var(--color-principal);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: var(--transicion);
+  box-shadow: var(--sombra-base);
+}
+
+.btn-login:hover {
+  background-color: var(--color-secundario);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ===========================================
+   🕊️ OLVIDÉ CONTRASEÑA
+   =========================================== */
+
+.forgot-password {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.forgot-password a {
+  color: var(--color-secundario);
+  text-decoration: none;
+  transition: var(--transicion);
+}
+
+.forgot-password a:hover {
+  color: var(--color-principal);
+}
+
+/* ===========================================
+   📱 RESPONSIVE DESIGN
+   =========================================== */
+
+@media (max-width: 992px) {
+  .login-left {
+    flex: 0.8;
+  }
+
+  .login-right {
+    padding: 3rem 2rem;
+  }
+
+  .brand-logo {
+    font-size: 3rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left {
+    height: 35vh;
+    padding: 2rem;
+    background-position: top;
+  }
+
+  .login-right {
+    height: 65vh;
+    box-shadow: none;
+  }
+
+  .login-header {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-left {
+    height: 30vh;
+    padding: 1.5rem;
+  }
+
+  .login-right {
+    padding: 2rem 1.5rem;
+  }
+
+  .login-title {
+    font-size: 1.4rem;
+  }
+
+  .btn-login {
+    font-size: 1rem;
+    padding: 10px;
+  }
+}

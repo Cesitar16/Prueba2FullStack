@@ -1,0 +1,215 @@
+/* ==========================================================
+   🎨 VARIABLES GLOBALES – Descansos del Recuerdo SPA
+   ========================================================== */
+
+/* 🪶 PALETA DE COLORES PRINCIPAL */
+:root {
+  /* Colores principales (marca) */
+  --color-principal: #5a4634; /* madera oscuro */
+  --color-principal-oscuro: #3e2f21;
+  --color-secundario: #d4af37; /* dorado */
+  --color-secundario-oscuro: #b9962f;
+
+  /* Colores complementarios */
+  --color-acento: #8b7355; /* tono arena */
+  --color-fondo: #f9f7f3;
+  --color-blanco: #ffffff;
+  --color-gris: #eaeaea;
+  --color-gris-oscuro: #6c757d;
+  --color-texto: #333333;
+
+  /* Colores de estado */
+  --color-exito: #198754;
+  --color-error: #dc3545;
+  --color-advertencia: #ffc107;
+  --color-info: #0dcaf0;
+  --color-bajo-stock: #c92a2a;
+
+  /* Colores de enlaces */
+  --color-link: var(--color-principal);
+  --color-link-hover: var(--color-secundario);
+
+  /* Fondo y degradados */
+  --bg-principal: linear-gradient(
+    135deg,
+    rgba(90, 70, 52, 0.95),
+    rgba(45, 34, 25, 0.95)
+  );
+  --bg-dorado: linear-gradient(
+    135deg,
+    rgba(212, 175, 55, 0.95),
+    rgba(168, 138, 40, 0.95)
+  );
+
+  /* ==========================================================
+     🖋️ TIPOGRAFÍAS
+     ========================================================== */
+  --fuente-principal: "Poppins", "Segoe UI", sans-serif;
+  --fuente-titulos: "Playfair Display", serif;
+
+  /* ==========================================================
+     📏 ESPACIADOS Y RADIOS
+     ========================================================== */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --padding-xs: 4px;
+  --padding-sm: 8px;
+  --padding-md: 16px;
+  --padding-lg: 24px;
+  --padding-xl: 40px;
+
+  /* ==========================================================
+     🧭 SOMBRAS Y BORDES
+     ========================================================== */
+  --sombra-suave: 0 2px 5px rgba(0, 0, 0, 0.08);
+  --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --sombra-fuerte: 0 8px 20px rgba(0, 0, 0, 0.2);
+  --borde-suave: 1px solid rgba(0, 0, 0, 0.1);
+
+  /* ==========================================================
+     ⚙️ TRANSICIONES Y EFECTOS
+     ========================================================== */
+  --transicion-base: all 0.3s ease;
+  --transicion-lenta: all 0.5s ease;
+  --transicion-rapida: all 0.15s ease;
+
+  /* ==========================================================
+     📊 Z-INDEX
+     ========================================================== */
+  --z-navbar: 1000;
+  --z-modal: 1050;
+  --z-dropdown: 1100;
+
+  /* ==========================================================
+     📱 BREAKPOINTS
+     ========================================================== */
+  --bp-xl: 1200px;
+  --bp-lg: 992px;
+  --bp-md: 768px;
+  --bp-sm: 576px;
+  --bp-xs: 420px;
+}
+
+/* ==========================================================
+   🧱 UTILIDADES REUSABLES (opcionales)
+   ========================================================== */
+
+/* Texto */
+.text-principal {
+  color: var(--color-principal) !important;
+}
+
+.text-secundario {
+  color: var(--color-secundario) !important;
+}
+
+.text-muted {
+  color: var(--color-gris-oscuro) !important;
+}
+
+/* Fondo */
+.bg-principal {
+  background-color: var(--color-principal) !important;
+}
+
+.bg-secundario {
+  background-color: var(--color-secundario) !important;
+}
+
+.bg-fondo {
+  background-color: var(--color-fondo) !important;
+}
+
+/* Bordes y sombras */
+.rounded-md {
+  border-radius: var(--radius-md) !important;
+}
+
+.shadow-suave {
+  box-shadow: var(--sombra-suave) !important;
+}
+
+.shadow-media {
+  box-shadow: var(--sombra-media) !important;
+}
+
+.shadow-fuerte {
+  box-shadow: var(--sombra-fuerte) !important;
+}
+
+/* Hover suave */
+.hover-dorado:hover {
+  color: var(--color-secundario);
+  transition: var(--transicion-base);
+}
+
+/* Botones personalizados */
+.btn-dorado {
+  background-color: var(--color-secundario);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: var(--transicion-base);
+}
+
+.btn-dorado:hover {
+  background-color: var(--color-secundario-oscuro);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.btn-madera {
+  background-color: var(--color-principal);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: var(--transicion-base);
+}
+
+.btn-madera:hover {
+  background-color: var(--color-principal-oscuro);
+  color: #fff;
+}
+
+/* Badges personalizados */
+.badge-exito {
+  background-color: var(--color-exito);
+  color: #fff;
+}
+
+.badge-error {
+  background-color: var(--color-error);
+  color: #fff;
+}
+
+.badge-advertencia {
+  background-color: var(--color-advertencia);
+  color: #333;
+}
+
+.badge-stock-bajo {
+  background-color: var(--color-bajo-stock);
+  color: #fff;
+}
+
+/* Scroll personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f2ee;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-principal);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-secundario);
+}
