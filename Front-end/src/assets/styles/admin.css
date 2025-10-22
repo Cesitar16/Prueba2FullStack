@@ -1,0 +1,52 @@
+/* src/assets/styles/admin.css */
+
+.admin-layout {
+    height: 100vh;
+}
+
+.sidebar-admin {
+    width: 240px;
+    background-color: #1e1e2f;
+    color: #fff;
+    padding: 1rem;
+}
+
+.sidebar-admin .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    color: #f8b400;
+}
+
+.sidebar-admin ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-admin .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    text-decoration: none;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+}
+
+.sidebar-admin .nav-item.active {
+    background-color: #f8b400;
+    color: #000;
+}
+
+.admin-header {
+    background: #f8f9fa;
+}
+
+.stat-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
