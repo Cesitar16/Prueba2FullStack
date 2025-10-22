@@ -4,9 +4,12 @@
 .vscode/
 
 # Archivos de compilación de Maven/Spring Boot
-/target/
+target/
 *.jar
 *.war
 
 # Logs
 *.log
+
+# Archivos de sistema
+.DS_Store
