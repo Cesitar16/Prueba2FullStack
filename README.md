@@ -252,7 +252,7 @@ Incluye ejemplos de:
 
 > 🏫 Proyecto académico – Duoc UC
 > **Profesor guía:** Viviana Soledad Poblete Lopez
-> 🧩 Evaluación Experiencia 2 – FullStack Developer
+> 🧩 Evaluación Experiencia 2 – FullStack II
 
 ---
 
