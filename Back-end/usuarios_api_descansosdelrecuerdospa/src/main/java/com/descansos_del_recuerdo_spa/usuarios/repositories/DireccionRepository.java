@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DireccionRepository extends JpaRepository<Direccion, Long> {
-    List<Direccion> findByUsuario_Id(Long usuarioId);
+    List<Direccion> findByUsuarioId(Long usuarioId);
 }
