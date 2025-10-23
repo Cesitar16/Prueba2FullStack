@@ -1,3 +1,5 @@
+import "/src/assets/styles/admin-modal.css";
+
 export default function AdminModal({ open, title, children, onClose, onSubmit, submitText="Guardar" }) {
     if (!open) return null;
     return (

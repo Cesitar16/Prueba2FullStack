@@ -1,0 +1,109 @@
+/* ===========================================================
+   💎 ESTILOS – Admin Modal (Descansos del Recuerdo SPA)
+   =========================================================== */
+
+:root {
+    --color-principal: #5a4634; /* tono madera */
+    --color-secundario: #d4af37; /* dorado */
+    --color-fondo: #f9f7f3;
+    --color-texto: #333;
+    --radio-base: 12px;
+    --sombra-base: 0 3px 8px rgba(0, 0, 0, 0.1);
+    --transicion: all 0.3s ease;
+}
+
+.admin-modal-dialog {
+    border-radius: var(--radio-base);
+}
+
+.admin-modal-header {
+    background-color: var(--color-principal);
+    color: #fff;
+    border-top-left-radius: var(--radio-base);
+    border-top-right-radius: var(--radio-base);
+    box-shadow: var(--sombra-base);
+}
+
+.admin-modal-header .modal-title {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.admin-modal-body {
+    background-color: var(--color-fondo);
+    padding: 1.8rem;
+    border-radius: 0 0 var(--radio-base) var(--radio-base);
+}
+
+.admin-modal-form label {
+    font-weight: 500;
+    color: var(--color-principal);
+}
+
+.admin-modal-form .form-control,
+.admin-modal-form .form-select {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: none;
+    transition: var(--transicion);
+}
+
+.admin-modal-form .form-control:focus,
+.admin-modal-form .form-select:focus {
+    border-color: var(--color-secundario);
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+}
+
+.admin-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.8rem;
+    gap: 10px;
+}
+
+.btn-cancelar {
+    background-color: #dcdcdc !important;
+    border: none !important;
+    color: #333 !important;
+    border-radius: 8px !important;
+    padding: 0.45rem 1.1rem !important;
+    transition: var(--transicion);
+}
+
+.btn-cancelar:hover {
+    background-color: #bbb !important;
+}
+
+.btn-guardar {
+    background-color: var(--color-secundario) !important;
+    border: none !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0.45rem 1.3rem !important;
+    transition: var(--transicion);
+}
+
+.btn-guardar:hover {
+    background-color: #b9962f !important;
+    transform: translateY(-1px);
+}
+
+.admin-modal-body textarea {
+    resize: none;
+}
+
+/* animación suave al abrir modal */
+.admin-modal-dialog.animate__fadeInUp {
+    animation-duration: 0.45s;
+}
+
+/* responsive */
+@media (max-width: 576px) {
+    .admin-modal-body {
+        padding: 1.2rem;
+    }
+    .admin-modal-form label {
+        font-size: 0.9rem;
+    }
+}
