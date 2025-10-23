@@ -49,15 +49,8 @@ public class UrnaController {
     // ✅ Actualizar parcialmente (PATCH)
     @PatchMapping("/{id}")
     public ResponseEntity<Urna> update(@PathVariable Long id, @RequestBody UrnaInputDTO dto) {
-        try {
-            Urna actualizada = urnaService.update(id, dto);
-            return ResponseEntity.ok(actualizada);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+        Urna updated = urnaService.update(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     // ✅ Eliminar urna

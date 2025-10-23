@@ -58,18 +58,46 @@ export default function UrnasAdmin() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // 🔹 Crear urna
+    const buildPayload = () => {
+        const selectedMaterial = materiales.find((m) => String(m.id) === String(formData.material));
+        const selectedColor    = colores.find((c)    => String(c.id) === String(formData.color));
+        const selectedModelo   = modelos.find((mo)   => String(mo.id) === String(formData.modelo));
+
+        // Convierte numéricos a Number si vienen como string
+        const toNum = (v) => (v === "" || v === null || v === undefined ? null : Number(v));
+
+        const base = {
+            nombre: formData.nombre?.trim(),
+            descripcionCorta: formData.descripcionCorta ?? "",
+            descripcionDetallada: formData.descripcionDetallada ?? "",
+            alto: toNum(formData.alto),
+            ancho: toNum(formData.ancho),
+            profundidad: toNum(formData.profundidad),
+            peso: toNum(formData.peso),
+            precio: toNum(formData.precio),
+            disponible: formData.disponible === "s" ? "s" : "n",
+            estado: formData.estado || "Activo",
+            imagenPrincipal: formData.imagenPrincipal ?? "",
+            idInterno: formData.idInterno ?? "",
+            // 👇 Lo IMPORTANTE para el backend:
+            materialId: selectedMaterial ? selectedMaterial.id : null,
+            colorId:    selectedColor    ? selectedColor.id    : null,
+            modeloId:   selectedModelo   ? selectedModelo.id   : null,
+
+            // Opcional (decorativo, el backend puede ignorarlo):
+            material: selectedMaterial ? { id: selectedMaterial.id, nombre: selectedMaterial.nombre } : null,
+            color:    selectedColor    ? { id: selectedColor.id,    nombre: selectedColor.nombre }    : null,
+            modelo:   selectedModelo   ? { id: selectedModelo.id,   nombre: selectedModelo.nombre }   : null,
+        };
+
+        return base;
+    };
+
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            const payload = {
-                ...formData,
-                disponible: formData.disponible === "s" ? "s" : "n",
-                material: formData.material ? { id: formData.material } : null,
-                color: formData.color ? { id: formData.color } : null,
-                modelo: formData.modelo ? { id: formData.modelo } : null,
-            };
-            console.log("Payload enviado al crear urna:", payload);
+            const payload = buildPayload();
+            console.log("Payload CREATE Urna:", payload);
             await catalogoApi.createUrna(payload);
             await cargarUrnas();
             closeModal();
@@ -98,14 +126,8 @@ export default function UrnasAdmin() {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            const payload = {
-                ...formData,
-                disponible: formData.disponible === "s" ? "s" : "n",
-                material: formData.material ? { id: formData.material } : null,
-                color: formData.color ? { id: formData.color } : null,
-                modelo: formData.modelo ? { id: formData.modelo } : null,
-            };
-            console.log("Payload enviado al backend:", payload);
+            const payload = buildPayload();
+            console.log("Payload UPDATE Urna:", payload);
             await catalogoApi.updateUrna(editingUrna.id, payload);
             await cargarUrnas();
             closeModal();
@@ -177,20 +199,14 @@ export default function UrnasAdmin() {
                 {urnas.map((u) => (
                     <tr key={u.id}>
                         <td>{u.id}</td>
-                        <td>{u.nombre}</td>
-                        <td>${u.precio}</td>
-                        <td>{u.disponible === "s" ? "Sí" : "No"}</td>
+                        <td>{u.nombre || "-"}</td>
+                        <td>${Number(u.precio || 0).toLocaleString("es-CL")}</td>
+                        <td>{String(u.disponible).toLowerCase() === "s" ? "Sí" : "No"}</td>
                         <td>
-                            <button
-                                className="btn btn-sm btn-warning me-2"
-                                onClick={() => handleEdit(u)}
-                            >
+                            <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(u)}>
                                 Editar
                             </button>
-                            <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() => handleDelete(u.id)}
-                            >
+                            <button className="btn btn-sm btn-danger" onClick={() => handleDelete(u.id)}>
                                 Eliminar
                             </button>
                         </td>
