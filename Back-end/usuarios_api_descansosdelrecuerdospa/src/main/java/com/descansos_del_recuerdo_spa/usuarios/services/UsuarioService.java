@@ -13,4 +13,5 @@ public interface UsuarioService {
     Usuario update(Long id, Usuario u);   // sin cambiar pass
     void changePassword(Long id, String newPassword);
     void delete(Long id);
+    Usuario save(Usuario usuario);
 }
