@@ -251,8 +251,8 @@ Incluye ejemplos de:
 | **César Rojas Ramos** | Desarrollador FullStack | [@Cesitar16](https://github.com/Cesitar16)           |
 
 > 🏫 Proyecto académico – Duoc UC
-> **Profesor guía:** Ing. Eduardo Martínez
-> 🧩 Evaluación Experiencia 2 – FullStack Developer
+> **Profesor guía:** Viviana Soledad Poblete Lopez
+> 🧩 Evaluación Experiencia 2 – FullStack II
 
 ---
 

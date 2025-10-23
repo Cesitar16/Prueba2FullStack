@@ -430,3 +430,57 @@ body { padding-top: 70px; }
   transform: translateY(-2px);
 }
 .floating-cart-btn i { font-size: 1.3rem; }
+
+/* ======================================================
+   🔧 Corrige sombra marrón en botones del modal
+   ====================================================== */
+.modal .btn-success,
+.modal .btn-success:focus,
+.modal .btn-success:hover,
+.modal .btn-success:active {
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* Navbar general */
+.custom-navbar {
+  background-color: #4b2e17; /* marrón cálido */
+  color: white !important;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.custom-navbar .nav-link {
+  color: #f2f2f2 !important;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #ffd37a !important;
+}
+
+.custom-navbar .navbar-brand {
+  color: #ffffff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.custom-navbar .btn-outline-light {
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+.custom-navbar .btn-outline-light:hover {
+  background-color: #fff !important;
+  color: #4b2e17 !important;
+}
+
+.dropdown-menu {
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f0ea;
+}
