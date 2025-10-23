@@ -6,7 +6,7 @@ import { Nosotros } from "./pages/Nosotros";
 import { Login } from "./pages/Login";
 import { NotFound } from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-import "./assets/styles/estilos.css"; // Importa tus estilos globales
+import "./assets/styles/estilos.css";
 import "./assets/styles/variables.css";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
