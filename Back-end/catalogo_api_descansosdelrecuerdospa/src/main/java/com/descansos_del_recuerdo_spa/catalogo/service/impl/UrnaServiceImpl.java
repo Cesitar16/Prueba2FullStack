@@ -10,9 +10,9 @@ import com.descansos_del_recuerdo_spa.catalogo.repositories.MaterialRepository;
 import com.descansos_del_recuerdo_spa.catalogo.repositories.ModeloRepository;
 import com.descansos_del_recuerdo_spa.catalogo.repositories.UrnaRepository;
 import com.descansos_del_recuerdo_spa.catalogo.service.UrnaService;
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,22 +20,17 @@ import java.util.Optional;
 @Service
 public class UrnaServiceImpl implements UrnaService {
 
-    private final UrnaRepository urnaRepository;
-    // 1. Inyectar los repositorios necesarios
-    private final MaterialRepository materialRepository;
-    private final ColorRepository colorRepository;
-    private final ModeloRepository modeloRepository;
+    @Autowired
+    private UrnaRepository urnaRepository;
 
-    // 2. Actualizar el constructor
-    public UrnaServiceImpl(UrnaRepository urnaRepository,
-                           MaterialRepository materialRepository,
-                           ColorRepository colorRepository,
-                           ModeloRepository modeloRepository) {
-        this.urnaRepository = urnaRepository;
-        this.materialRepository = materialRepository;
-        this.colorRepository = colorRepository;
-        this.modeloRepository = modeloRepository;
-    }
+    @Autowired
+    private MaterialRepository materialRepository;
+
+    @Autowired
+    private ColorRepository colorRepository;
+
+    @Autowired
+    private ModeloRepository modeloRepository;
 
     @Override
     public List<Urna> findAll() {
@@ -53,87 +48,59 @@ public class UrnaServiceImpl implements UrnaService {
     }
 
     @Override
-    public List<Urna> findByColor(Long colorId) {
-        return urnaRepository.findByColor_Id(colorId);
-    }
-
-    @Override
-    public List<Urna> findByModelo(Long modeloId) {
-        return urnaRepository.findByModelo_Id(modeloId);
-    }
-
-    @Override
     public Urna save(UrnaInputDTO dto) {
-        // Buscar las entidades relacionadas por ID
-        Material material = materialRepository.findById(dto.getMaterialId())
-                .orElseThrow(() -> new EntityNotFoundException("Material no encontrado con id: " + dto.getMaterialId()));
-
-        Color color = colorRepository.findById(dto.getColorId())
-                .orElseThrow(() -> new EntityNotFoundException("Color no encontrado con id: " + dto.getColorId()));
-
-        Modelo modelo = modeloRepository.findById(dto.getModeloId())
-                .orElseThrow(() -> new EntityNotFoundException("Modelo no encontrado con id: " + dto.getModeloId()));
-
-        // Construir la entidad Urna usando el Builder (ya que tu entidad Urna.java tiene @Builder)
-        Urna urna = Urna.builder()
-                .idInterno(dto.getIdInterno())
-                .nombre(dto.getNombre())
-                .descripcionCorta(dto.getDescripcionCorta())
-                .descripcionDetallada(dto.getDescripcionDetallada())
-                .precio(dto.getPrecio())
-                .stock(dto.getStock() != null ? dto.getStock() : 0)
-                .disponible(dto.getDisponible() != null ? dto.getDisponible() : "s")
-                .ancho(dto.getAncho())
-                .alto(dto.getAlto())
-                .profundidad(dto.getProfundidad())
-                .peso(dto.getPeso())
-                .imagenPrincipal(dto.getImagenPrincipal())
-                .estado("Activo")
-                .fechaCreacion(LocalDateTime.now())
-                .material(material)
-                .color(color)
-                .modelo(modelo)
-                .build();
-
+        Urna urna = new Urna();
+        mapDtoToEntity(dto, urna);
+        urna.setFechaCreacion(LocalDateTime.now());
         return urnaRepository.save(urna);
     }
 
     @Override
     public Urna update(Long id, UrnaInputDTO dto) {
-        // Primero, buscar la urna existente
-        Urna existingUrna = urnaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Urna no encontrada con id: " + id));
+        Urna urna = urnaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Urna no encontrada con id " + id));
+        mapDtoToEntity(dto, urna);
+        return urnaRepository.save(urna);
+    }
 
-        // Buscar las entidades relacionadas (igual que en 'save')
-        Material material = materialRepository.findById(dto.getMaterialId())
-                .orElseThrow(() -> new EntityNotFoundException("Material no encontrado con id: " + dto.getMaterialId()));
+    private void mapDtoToEntity(UrnaInputDTO dto, Urna urna) {
+        urna.setNombre(dto.getNombre());
+        urna.setDescripcionCorta(dto.getDescripcionCorta());
+        urna.setDescripcionDetallada(dto.getDescripcionDetallada());
 
-        Color color = colorRepository.findById(dto.getColorId())
-                .orElseThrow(() -> new EntityNotFoundException("Color no encontrado con id: " + dto.getColorId()));
+        if (dto.getPrecio() != null)
+            urna.setPrecio(BigDecimal.valueOf(dto.getPrecio()));
 
-        Modelo modelo = modeloRepository.findById(dto.getModeloId())
-                .orElseThrow(() -> new EntityNotFoundException("Modelo no encontrado con id: " + dto.getModeloId()));
+        if (dto.getAlto() != null)
+            urna.setAlto(BigDecimal.valueOf(dto.getAlto()));
 
-        // Actualizar los campos de la urna existente
-        existingUrna.setIdInterno(dto.getIdInterno());
-        existingUrna.setNombre(dto.getNombre());
-        existingUrna.setDescripcionCorta(dto.getDescripcionCorta());
-        existingUrna.setDescripcionDetallada(dto.getDescripcionDetallada());
-        existingUrna.setPrecio(dto.getPrecio());
-        existingUrna.setStock(dto.getStock());
-        existingUrna.setDisponible(dto.getDisponible());
-        existingUrna.setAncho(dto.getAncho());
-        existingUrna.setAlto(dto.getAlto());
-        existingUrna.setProfundidad(dto.getProfundidad());
-        existingUrna.setPeso(dto.getPeso());
-        existingUrna.setImagenPrincipal(dto.getImagenPrincipal());
+        if (dto.getAncho() != null)
+            urna.setAncho(BigDecimal.valueOf(dto.getAncho()));
 
-        // Actualizar las relaciones
-        existingUrna.setMaterial(material);
-        existingUrna.setColor(color);
-        existingUrna.setModelo(modelo);
+        if (dto.getProfundidad() != null)
+            urna.setProfundidad(BigDecimal.valueOf(dto.getProfundidad()));
 
-        return urnaRepository.save(existingUrna);
+        if (dto.getPeso() != null)
+            urna.setPeso(BigDecimal.valueOf(dto.getPeso()));
+
+        urna.setEstado(dto.getEstado());
+        urna.setDisponible(dto.getDisponible() != null ? dto.getDisponible() : "s");
+        urna.setImagenPrincipal(dto.getImagenPrincipal());
+
+        if (dto.getMaterialId() != null) {
+            Material mat = materialRepository.findById(dto.getMaterialId()).orElse(null);
+            urna.setMaterial(mat);
+        }
+
+        if (dto.getColorId() != null) {
+            Color col = colorRepository.findById(dto.getColorId()).orElse(null);
+            urna.setColor(col);
+        }
+
+        if (dto.getModeloId() != null) {
+            Modelo mod = modeloRepository.findById(dto.getModeloId()).orElse(null);
+            urna.setModelo(mod);
+        }
     }
 
     @Override

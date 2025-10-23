@@ -3,38 +3,34 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../assets/styles/login.css";
 
-/**
- * Login.jsx
- * Pantalla de inicio de sesión basada en tu login.html original
- */
 export function Login() {
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-  const [credenciales, setCredenciales] = useState({
-    correo: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
+    const [credenciales, setCredenciales] = useState({ correo: "", password: "" });
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredenciales({ ...credenciales, [name]: value });
-  };
+    const onChange = (e) => {
+        const { name, value } = e.target;
+        setCredenciales((prev) => ({ ...prev, [name]: value }));
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!credenciales.correo || !credenciales.password) {
-      return alert("Completa ambos campos para continuar.");
-    }
-    setLoading(true);
-    const exito = await login(credenciales.correo, credenciales.password);
-    setLoading(false);
-    if (exito) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      navigate(user?.rol === "Administrador" ? "/admin" : "/");
-    }
-  };
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMsg("");
+        setLoading(true);
+        try {
+            await login(credenciales.correo.trim(), credenciales.password);
+            navigate("/", { replace: true });
+        } catch (err) {
+            setErrorMsg(
+                err?.response?.data?.message || "Correo o contraseña inválidos."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
   return (
     <div className="login-container">
@@ -60,7 +56,7 @@ export function Login() {
           <p className="login-subtitle">Inicia sesión para continuar</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onSubmit}>
           <div className="form-floating mb-3">
             <input
               type="email"
@@ -69,7 +65,7 @@ export function Login() {
               id="correo"
               placeholder="correo@ejemplo.com"
               value={credenciales.correo}
-              onChange={handleChange}
+              onChange={onChange}
             />
             <label htmlFor="correo">Correo electrónico</label>
           </div>
@@ -82,10 +78,12 @@ export function Login() {
               id="password"
               placeholder="Contraseña"
               value={credenciales.password}
-              onChange={handleChange}
+              onChange={onChange}
             />
             <label htmlFor="password">Contraseña</label>
           </div>
+
+            {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
 
           <button
             type="submit"

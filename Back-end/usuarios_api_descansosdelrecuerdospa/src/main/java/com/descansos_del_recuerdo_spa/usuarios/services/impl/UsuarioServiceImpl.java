@@ -46,4 +46,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override public void delete(Long id){ repo.deleteById(id); }
+
+    @Override
+    public Usuario save(Usuario usuario) {
+        return repo.save(usuario);
+    }
 }

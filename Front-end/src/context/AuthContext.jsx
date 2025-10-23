@@ -1,36 +1,73 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 export const AuthContext = createContext();
 
+const API_BASE = import.meta.env.VITE_API_USUARIOS || "http://localhost:8004";
+
 /**
- * AuthContext.jsx
- * Maneja autenticación, sesión persistente y datos del usuario logueado.
- * Compatible con el flujo de CarritoModal.
+ * 🌿 AuthContext unificado
+ * Combina lo mejor del flujo de César y del tuyo:
+ * - Interceptores Axios globales
+ * - Manejo persistente de token
+ * - Refresh automático de sesión
+ * - Manejo elegante de errores y 401
  */
 export function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState(null);
+  const [user, setUser] = useState(null); // { id, nombre, correo, rol, ... }
   const [loading, setLoading] = useState(true);
 
   // ============================================================
-  // 🔹 Iniciar sesión
+  // 🔹 Axios singleton con interceptores
+  // ============================================================
+  const http = useMemo(() => {
+    const instance = axios.create({ baseURL: API_BASE });
+
+    instance.interceptors.request.use((config) => {
+      const token = localStorage.getItem("token");
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
+
+    instance.interceptors.response.use(
+      (res) => res,
+      (err) => {
+        if (err?.response?.status === 401) {
+          console.warn("🔒 Sesión expirada, cerrando sesión...");
+          localStorage.removeItem("token");
+          setUser(null);
+        }
+        return Promise.reject(err);
+      }
+    );
+
+    return instance;
+  }, []);
+
+  // ============================================================
+  // 🔹 Obtener token actual
+  // ============================================================
+  const getToken = () =>
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  // ============================================================
+  // 🔹 Login
   // ============================================================
   const login = async (correo, password) => {
     try {
-      const res = await axios.post("http://localhost:8004/api/auth/login", {
+      const { data } = await axios.post(`${API_BASE}/api/auth/login`, {
         correo,
         password,
       });
 
-      const token = res.data.token;
+      const token = data?.token;
+      if (!token) throw new Error("No se recibió token del backend");
+
       localStorage.setItem("token", token);
 
-      // Obtener perfil del usuario autenticado
-      const meRes = await axios.get("http://localhost:8004/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const me = await http.get("/api/auth/me");
+      setUser(me.data);
 
-      setUsuario(meRes.data);
       return true;
     } catch (err) {
       console.error("Error al iniciar sesión:", err);
@@ -40,53 +77,49 @@ export function AuthProvider({ children }) {
   };
 
   // ============================================================
-  // 🔹 Cerrar sesión
+  // 🔹 Logout
   // ============================================================
   const logout = () => {
     localStorage.removeItem("token");
-    setUsuario(null);
+    setUser(null);
   };
 
   // ============================================================
-  // 🔹 Obtener token actual
-  // ============================================================
-  const getToken = () => localStorage.getItem("token");
-
-  // ============================================================
-  // 🔹 Refrescar perfil (por si cambia información del usuario)
+  // 🔹 Refrescar perfil manualmente
   // ============================================================
   const refreshProfile = async () => {
     const token = getToken();
     if (!token) return;
     try {
-      const res = await axios.get("http://localhost:8004/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsuario(res.data);
-    } catch (err) {
-      console.warn("No se pudo refrescar el perfil:", err);
+      const { data } = await http.get("/api/auth/me");
+      setUser(data);
+    } catch {
       logout();
     }
   };
 
   // ============================================================
-  // 🔹 Cargar sesión persistente al iniciar la app
+  // 🔹 Restaurar sesión al montar
   // ============================================================
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    const restoreSession = async () => {
+      const token = getToken();
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-    axios
-      .get("http://localhost:8004/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setUsuario(res.data))
-      .catch(() => logout())
-      .finally(() => setLoading(false));
-  }, []);
+      try {
+        const { data } = await http.get("/api/auth/me");
+        setUser(data);
+      } catch {
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+    restoreSession();
+  }, [http]);
 
   // ============================================================
   // 🔹 Exportar contexto
@@ -94,13 +127,13 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        usuario,
+        user,
+        loading,
+        isAuthenticated: !!user,
         login,
         logout,
-        loading,
-        isAuthenticated: !!usuario,
         refreshProfile,
-        token: getToken(),
+        getToken,
       }}
     >
       {children}

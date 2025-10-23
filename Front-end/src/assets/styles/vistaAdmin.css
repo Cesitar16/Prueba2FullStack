@@ -1,290 +1,367 @@
-/* =======================================================
-   🧭 PANEL ADMINISTRATIVO – Descansos del Recuerdo SPA
-   ======================================================= */
+/* ===========================================
+   🌿 PANEL ADMIN – Descansos del Recuerdo SPA
+   =========================================== */
 
-@import url("./variables.css");
+:root {
+    --color-principal: #5a4634; /* madera oscura */
+    --color-secundario: #d4af37; /* dorado */
+    --color-fondo: #f9f7f3;
+    --color-texto: #333;
+    --color-muted: #6c757d;
+    --color-card: #ffffff;
+    --sombra-base: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --radius-base: 14px;
+    --transicion: all 0.3s ease;
+    --sidebar-bg: linear-gradient(180deg, #3e2c1a, #5a4634);
+}
+
+/* ===========================================
+   🧭 ESTRUCTURA BASE
+   =========================================== */
 
 body {
-  background-color: var(--color-fondo);
-  font-family: var(--fuente-principal);
-  color: var(--color-texto);
+    background-color: var(--color-fondo);
+    font-family: "Poppins", "Segoe UI", sans-serif;
+    color: var(--color-texto);
+    margin: 0;
+    overflow-x: hidden;
 }
 
-/* =======================================================
-   🏠 CONTENEDOR GENERAL
-   ======================================================= */
-
-.container {
-  max-width: 1200px;
+/* Contenedor general del admin */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
 }
 
-.titulo-seccion {
-  color: var(--color-principal);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-align: center;
-  margin-bottom: 1.5rem;
+/* ===========================================
+   🧱 SIDEBAR ADMIN
+   =========================================== */
+
+.sidebar-admin {
+    width: 250px;
+    background: var(--sidebar-bg);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--sombra-base);
 }
 
-/* =======================================================
-   📊 DASHBOARD ESTADÍSTICAS
-   ======================================================= */
+.sidebar-admin h3 {
+    text-align: center;
+    font-weight: 700;
+    color: var(--color-secundario);
+    margin: 1.5rem 0;
+    letter-spacing: 1px;
+}
+
+.sidebar-admin ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-admin li {
+    margin: 0.5rem 0;
+}
+
+.sidebar-admin .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem 1.2rem;
+    color: #e0d9cf;
+    border-radius: 10px;
+    transition: var(--transicion);
+}
+
+.sidebar-admin .nav-item:hover,
+.sidebar-admin .nav-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.sidebar-admin .nav-item svg {
+    font-size: 1.2rem;
+}
+
+/* ===========================================
+   📋 HEADER ADMIN
+   =========================================== */
+
+.admin-header {
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--sombra-base);
+}
+
+.admin-header h2 {
+    font-weight: 600;
+    color: var(--color-principal);
+}
+
+.admin-header .btn-logout {
+    background-color: var(--color-secundario);
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: var(--transicion);
+}
+
+.admin-header .btn-logout:hover {
+    background-color: #b18e2b;
+}
+
+/* ===========================================
+   📊 DASHBOARD
+   =========================================== */
 
 .dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+    flex: 1;
+    padding: 2rem;
+    background: var(--color-fondo);
 }
 
-.dashboard-card {
-  background-color: var(--color-blanco);
-  border-radius: var(--radius-md);
-  box-shadow: var(--sombra-media);
-  padding: 1.5rem;
-  transition: var(--transicion-base);
-  text-align: center;
+.dashboard-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sombra-fuerte);
+.stat-card {
+    flex: 1 1 220px;
+    background: var(--color-card);
+    border-radius: var(--radius-base);
+    padding: 1.5rem;
+    box-shadow: var(--sombra-base);
+    transition: var(--transicion);
+    position: relative;
+    overflow: hidden;
 }
 
-.dashboard-icon {
-  font-size: 2rem;
-  color: var(--color-secundario);
-  margin-bottom: 0.5rem;
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
-.dashboard-value {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--color-principal);
+.stat-card::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    top: -20px;
+    right: -20px;
+    background: var(--color-secundario);
+    opacity: 0.15;
 }
 
-.dashboard-label {
-  font-size: 0.95rem;
-  color: var(--color-gris-oscuro);
+.stat-card h4 {
+    color: var(--color-principal);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 10px;
 }
 
-/* =======================================================
-   📋 TABLAS DE DATOS
-   ======================================================= */
-
-.table {
-  background-color: var(--color-blanco);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--sombra-suave);
+.stat-card p {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-secundario);
+    margin: 0;
 }
 
-.table thead {
-  background-color: var(--color-principal);
-  color: #fff;
-  font-weight: 600;
+/* ===========================================
+   📦 TABLAS ADMIN
+   =========================================== */
+
+.table-modern {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    margin-top: 1rem;
 }
 
-.table th,
-.table td {
-  vertical-align: middle;
-  padding: 12px;
+.table-modern thead {
+    background: var(--color-principal);
+    color: #fff;
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
-.table-hover tbody tr:hover {
-  background-color: rgba(212, 175, 55, 0.08);
-  cursor: pointer;
+.table-modern th,
+.table-modern td {
+    padding: 12px;
+    background-color: #fff;
+    text-align: left;
+    border: none;
 }
 
-.table .badge {
-  font-size: 0.8rem;
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
+.table-modern tbody tr {
+    transition: var(--transicion);
+    box-shadow: var(--sombra-base);
 }
 
-/* =======================================================
-   🧾 FORMULARIOS (USUARIOS / PRODUCTOS)
-   ======================================================= */
-
-.form-container {
-  background-color: var(--color-blanco);
-  border-radius: var(--radius-md);
-  padding: 2rem;
-  box-shadow: var(--sombra-media);
+.table-modern tbody tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
 }
 
-.form-label {
-  color: var(--color-principal);
-  font-weight: 600;
+/* ===========================================
+   🧰 BOTONES
+   =========================================== */
+
+.btn {
+    border-radius: 8px !important;
+    transition: var(--transicion);
 }
 
-.form-control {
-  border-radius: var(--radius-sm);
-  border: 1px solid #ccc;
-  transition: var(--transicion-base);
+.btn-primary {
+    background-color: var(--color-principal);
+    border: none;
 }
 
-.form-control:focus {
-  border-color: var(--color-secundario);
-  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+.btn-primary:hover {
+    background-color: var(--color-secundario);
+    color: #fff;
 }
 
-.btn-guardar {
-  background-color: var(--color-secundario);
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  transition: var(--transicion-base);
+.btn-warning {
+    background-color: #f0ad4e;
+    border: none;
+    color: #fff;
 }
 
-.btn-guardar:hover {
-  background-color: var(--color-secundario-oscuro);
-  transform: translateY(-2px);
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
 }
 
-.btn-cancelar {
-  background-color: #ccc;
-  color: #333;
-  border: none;
-  font-weight: 500;
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  transition: var(--transicion-base);
+.btn-success {
+    background-color: #198754;
+    border: none;
 }
 
-.btn-cancelar:hover {
-  background-color: #b1b1b1;
+/* ===========================================
+   🧾 MODAL ADMIN
+   =========================================== */
+
+.modal-content {
+    border-radius: var(--radius-base);
+    box-shadow: var(--sombra-base);
+    animation: fadeInScale 0.4s ease;
 }
 
-/* =======================================================
-   ⚙️ BOTONES DE ACCIÓN EN TABLAS
-   ======================================================= */
-
-.btn-sm {
-  border-radius: var(--radius-sm);
-  transition: var(--transicion-base);
-  padding: 5px 10px;
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-.btn-outline-primary {
-  color: var(--color-principal);
-  border-color: var(--color-principal);
+.modal-header {
+    background-color: var(--color-principal);
+    color: #fff;
+    border-top-left-radius: var(--radius-base);
+    border-top-right-radius: var(--radius-base);
 }
 
-.btn-outline-primary:hover {
-  background-color: var(--color-principal);
-  color: #fff;
+.modal-footer button {
+    font-weight: 500;
 }
 
-.btn-outline-danger {
-  color: var(--color-error);
-  border-color: var(--color-error);
+/* ===========================================
+   🧮 FORMULARIOS
+   =========================================== */
+
+form label {
+    color: var(--color-principal);
+    font-weight: 500;
 }
 
-.btn-outline-danger:hover {
-  background-color: var(--color-error);
-  color: #fff;
+form .form-control {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: var(--transicion);
 }
 
-.btn-outline-warning {
-  color: var(--color-advertencia);
-  border-color: var(--color-advertencia);
+form .form-control:focus {
+    border-color: var(--color-secundario);
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
 }
 
-.btn-outline-warning:hover {
-  background-color: var(--color-advertencia);
-  color: #333;
+/* ===========================================
+   🎞️ ANIMACIONES SUAVES
+   =========================================== */
+
+.animate__animated {
+    animation-duration: 0.4s;
+    animation-fill-mode: both;
 }
 
-/* =======================================================
-   🔍 BARRA DE BÚSQUEDA Y FILTROS
-   ======================================================= */
-
-.filter-panel {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
 }
+.animate__fadeInRight { animation-name: fadeInRight; }
 
-.filter-panel input {
-  width: 50%;
-  border-radius: var(--radius-md);
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  transition: var(--transicion-base);
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
 }
+.animate__fadeInLeft { animation-name: fadeInLeft; }
 
-.filter-panel input:focus {
-  border-color: var(--color-secundario);
-  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+.animate__fadeInUp { animation-name: fadeInUp; }
 
-/* =======================================================
-   🟡 ESTADOS Y BADGES PERSONALIZADOS
-   ======================================================= */
-
-.badge-activo {
-  background-color: var(--color-exito);
-  color: #fff;
-}
-
-.badge-inactivo {
-  background-color: var(--color-gris-oscuro);
-  color: #fff;
-}
-
-.badge-stock-bajo {
-  background-color: var(--color-bajo-stock);
-  color: #fff;
-}
-
-/* =======================================================
-   🧠 PANEL RESPONSIVO
-   ======================================================= */
+/* ===========================================
+   🖥️ RESPONSIVE DESIGN
+   =========================================== */
 
 @media (max-width: 992px) {
-  .dashboard-container {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
+    .sidebar-admin {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+    }
 
-  .filter-panel input {
-    width: 100%;
-    margin-bottom: 10px;
-  }
+    .dashboard-container {
+        padding: 1.2rem;
+    }
 
-  .filter-panel {
-    flex-direction: column;
-    align-items: stretch;
-  }
+    .stat-card {
+        flex: 1 1 45%;
+    }
 }
 
 @media (max-width: 768px) {
-  .dashboard-card {
-    padding: 1rem;
-  }
+    .admin-header {
+        flex-direction: column;
+        gap: 0.8rem;
+        text-align: center;
+    }
 
-  .dashboard-value {
-    font-size: 1.5rem;
-  }
-
-  .table th,
-  .table td {
-    font-size: 0.9rem;
-  }
-
-  .form-container {
-    padding: 1.5rem;
-  }
+    .table-modern {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 576px) {
-  .titulo-seccion {
-    font-size: 1.4rem;
-  }
-
-  .btn {
-    font-size: 0.85rem;
-  }
+    .stat-card {
+        flex: 1 1 100%;
+    }
 }

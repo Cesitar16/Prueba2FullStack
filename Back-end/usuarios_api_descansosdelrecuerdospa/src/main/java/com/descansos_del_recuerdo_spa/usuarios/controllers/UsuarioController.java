@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -28,6 +29,23 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario u){
         return ResponseEntity.ok(service.update(id, u));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Usuario> partialUpdate(@PathVariable Long id, @RequestBody Usuario cambios) {
+        Optional<Usuario> optional = service.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Usuario usuario = optional.get();
+
+        if (cambios.getNombre() != null) usuario.setNombre(cambios.getNombre());
+        if (cambios.getRol() != null) usuario.setRol(cambios.getRol());
+        if (cambios.getEstado() != null) usuario.setEstado(cambios.getEstado());
+
+        Usuario actualizado = service.save(usuario);
+        return ResponseEntity.ok(actualizado);
     }
 
     @PatchMapping("/{id}/password")
