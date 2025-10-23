@@ -2,21 +2,45 @@ import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
+/**
+ * Protege rutas seguras con verificación de sesión y rol.
+ * Muestra loader mientras AuthContext restaura sesión.
+ */
 export default function ProtectedRoute({ children, roleRequired = null }) {
-    const { user, loading } = useContext(AuthContext);
+    const { usuario, isAuthenticated, loading } = useContext(AuthContext);
 
+    // 🔸 Mientras se está verificando la sesión, no navegar todavía
     if (loading) {
-        return <div style={{ padding: 24 }}>Cargando sesión…</div>;
+        return (
+            <div
+                style={{
+                    height: "100vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    color: "#5a4634",
+                    fontFamily: "Poppins, sans-serif",
+                }}
+            >
+                <div className="spinner-border text-warning" role="status"></div>
+                <p className="mt-3 fw-medium">Verificando sesión...</p>
+            </div>
+        );
     }
 
-    if (!user) {
+    // 🔹 Sin sesión → ir al login
+    if (!isAuthenticated) {
+        console.warn("⛔ Usuario no autenticado");
         return <Navigate to="/login" replace />;
     }
 
-    if (roleRequired && user.rol !== roleRequired) {
-        alert("⚠️ No tienes permiso para acceder a esta sección.");
+    // 🔹 Rol insuficiente → redirigir a home
+    if (roleRequired && usuario?.rol?.toLowerCase?.() !== roleRequired.toLowerCase()) {
+        console.warn(`⚠️ Acceso denegado, se requiere rol: ${roleRequired}`);
         return <Navigate to="/" replace />;
     }
 
+    // ✅ Todo correcto
     return children;
 }
