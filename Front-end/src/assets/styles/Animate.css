@@ -1,0 +1,93 @@
+/* ===========================================================
+   🎞️ Animaciones suaves para transiciones internas del modal
+   Archivo: src/assets/styles/animate.css
+   =========================================================== */
+
+.animate__animated {
+  animation-duration: 0.4s;
+  animation-fill-mode: both;
+}
+
+/* Entrada desde la derecha */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate__fadeInRight {
+  animation-name: fadeInRight;
+}
+
+/* Salida hacia la izquierda */
+@keyframes fadeOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+}
+.animate__fadeOutLeft {
+  animation-name: fadeOutLeft;
+}
+
+/* Entrada desde la izquierda (para volver atrás) */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate__fadeInLeft {
+  animation-name: fadeInLeft;
+}
+
+/* Salida hacia la derecha (para ir hacia adelante) */
+@keyframes fadeOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+.animate__fadeOutRight {
+  animation-name: fadeOutRight;
+}
+
+/* Efecto de éxito */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate__fadeInUp {
+  animation-name: fadeInUp;
+}
+
+/* Duraciones extra si quieres variaciones */
+.animate__slow {
+  animation-duration: 0.8s;
+}
+
+.animate__faster {
+  animation-duration: 0.2s;
+}

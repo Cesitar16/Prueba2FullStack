@@ -90,6 +90,9 @@ export const usuariosApi = {
   delete: (id) => api.delete(`${BASE.USUARIOS}/api/usuarios/${id}`),
   login: (credenciales) => api.post(`${BASE.USUARIOS}/api/auth/login`, credenciales),
   getProfile: () => api.get(`${BASE.USUARIOS}/api/auth/me`),
+  getDireccionesByUsuario: (usuarioId) =>
+    api.get(`http://localhost:${PORTS.USUARIOS}/api/direcciones/usuario/${usuarioId}`),
+
 };
 
 /* =========================================
