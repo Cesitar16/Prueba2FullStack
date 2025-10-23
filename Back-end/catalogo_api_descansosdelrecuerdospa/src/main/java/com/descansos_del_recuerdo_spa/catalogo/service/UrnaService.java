@@ -7,17 +7,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UrnaService {
+
     List<Urna> findAll();
+
     Optional<Urna> findById(Long id);
+
     List<Urna> findByMaterial(Long materialId);
-    List<Urna> findByColor(Long colorId);
-    List<Urna> findByModelo(Long modeloId);
 
-    // 2. Cambiar la firma de save
-    Urna save(UrnaInputDTO urnaDTO);
+    Urna save(UrnaInputDTO dto);
 
-    // 3. Cambiar la firma de update
-    Urna update(Long id, UrnaInputDTO urnaDTO);
+    Urna update(Long id, UrnaInputDTO dto);
 
     void delete(Long id);
 }

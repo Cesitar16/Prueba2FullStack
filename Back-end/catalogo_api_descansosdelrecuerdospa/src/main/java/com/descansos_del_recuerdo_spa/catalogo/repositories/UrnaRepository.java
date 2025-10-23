@@ -1,5 +1,6 @@
 package com.descansos_del_recuerdo_spa.catalogo.repositories;
 
+import com.descansos_del_recuerdo_spa.catalogo.entities.Material;
 import com.descansos_del_recuerdo_spa.catalogo.entities.Urna;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -22,4 +23,6 @@ public interface UrnaRepository extends JpaRepository<Urna, Long> {
 
     // Buscar por rango de precio
     List<Urna> findByPrecioBetween(Double min, Double max);
+
+    List<Urna> findByMaterial_(Material material);
 }

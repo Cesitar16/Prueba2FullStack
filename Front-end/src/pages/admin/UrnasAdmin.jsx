@@ -1,148 +1,382 @@
-import { useEffect, useMemo, useState } from "react";
-import { api, BASE } from "../../services/api";
+import { useEffect, useState } from "react";
 import AdminModal from "../../components/admin/AdminModal";
-import ConfirmDialog from "../../components/admin/ConfirmDialog";
+import { catalogoApi } from "../../services/api";
 
 export default function UrnasAdmin() {
-    const [rows, setRows] = useState([]);
-    const [q, setQ] = useState("");
-    const [loading, setLoading] = useState(true);
+    const [urnas, setUrnas] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingUrna, setEditingUrna] = useState(null);
 
-    const [openC, setOpenC] = useState(false);
-    const [openE, setOpenE] = useState(false);
-    const [openD, setOpenD] = useState(false);
-    const [sel, setSel] = useState(null);
+    // Campos del formulario
+    const [formData, setFormData] = useState({
+        nombre: "",
+        descripcionCorta: "",
+        descripcionDetallada: "",
+        alto: "",
+        ancho: "",
+        profundidad: "",
+        peso: "",
+        precio: "",
+        disponible: "s",
+        estado: "Activo",
+        imagenPrincipal: "",
+        idInterno: "",
+        material: null,
+        color: null,
+        modelo: null,
+    });
 
-    const [f, setF] = useState({ nombre:"", material:"", color:"", precio:0, estado:"Activo" });
-    const onChange = e => setF(v=>({...v, [e.target.name]: e.target.value}));
+    const [materiales, setMateriales] = useState([]);
+    const [colores, setColores] = useState([]);
+    const [modelos, setModelos] = useState([]);
 
-    const load = async () => {
-        setLoading(true);
+    // 🧭 Cargar datos iniciales
+    useEffect(() => {
+        cargarUrnas();
+        cargarOpciones();
+    }, []);
+
+    const cargarUrnas = async () => {
+        const res = await catalogoApi.getUrnas();
+        setUrnas(res.data);
+    };
+
+    const cargarOpciones = async () => {
+        const [mat, col, mod] = await Promise.all([
+            catalogoApi.getMateriales(),
+            catalogoApi.getColores(),
+            catalogoApi.getModelos(),
+        ]);
+        setMateriales(mat.data);
+        setColores(col.data);
+        setModelos(mod.data);
+    };
+
+    // 🔹 Manejo de inputs
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // 🔹 Crear urna
+    const handleCreate = async (e) => {
+        e.preventDefault();
         try {
-            const res = await api.get(`${BASE.CATALOGO}/api/urnas`);
-            setRows(res.data || []);
-        } catch (e) { console.error(e); }
-        finally { setLoading(false); }
-    };
-    useEffect(()=>{ load(); },[]);
-
-    const list = useMemo(()=>{
-        const s = q.trim().toLowerCase();
-        return s ? rows.filter(r => `${r.nombre} ${r.material?.nombre} ${r.color?.nombre}`.toLowerCase().includes(s)) : rows;
-    },[q, rows]);
-
-    const openCreate = () => { setF({ nombre:"", material:"", color:"", precio:0, estado:"Activo" }); setOpenC(true); };
-    const createItem = async () => {
-        try{
-            const body = { nombre:f.nombre, precio: Number(f.precio), estado:f.estado, material:f.material, color:f.color };
-            const res = await api.post(`${BASE.CATALOGO}/api/urnas`, body);
-            setRows(prev => [res.data, ...prev]);
-            setOpenC(false);
-        }catch(e){ console.error(e); }
+            const payload = {
+                ...formData,
+                disponible: formData.disponible === "s" ? "s" : "n",
+                material: formData.material ? { id: formData.material } : null,
+                color: formData.color ? { id: formData.color } : null,
+                modelo: formData.modelo ? { id: formData.modelo } : null,
+            };
+            console.log("Payload enviado al crear urna:", payload);
+            await catalogoApi.createUrna(payload);
+            await cargarUrnas();
+            closeModal();
+        } catch (err) {
+            console.error("Error al crear urna:", err);
+            alert("Ocurrió un error al crear la urna.");
+        }
     };
 
-    const openEdit = (r) => { setSel(r); setF({
-        nombre: r.nombre || "", material: r.material?.nombre || "", color: r.color?.nombre || "",
-        precio: r.precio || 0, estado: r.estado || "Activo"
-    }); setOpenE(true); };
-
-    const updateItem = async () => {
-        try{
-            const body = { nombre:f.nombre, precio:Number(f.precio), estado:f.estado, material:f.material, color:f.color };
-            await api.put(`${BASE.CATALOGO}/api/urnas/${sel.id}`, body);
-            setRows(prev => prev.map(x => x.id===sel.id ? {...x, ...body, material:{nombre:body.material}, color:{nombre:body.color}} : x));
-            setOpenE(false); setSel(null);
-        }catch(e){ console.error(e); }
+    // 🔹 Editar urna
+    const handleEdit = (urna) => {
+        setEditingUrna(urna);
+        setFormData({
+            ...urna,
+            disponible:
+                urna.disponible === "s" || urna.disponible === "S" || urna.disponible === true || urna.disponible === "Sí"
+                    ? "s"
+                    : "n",
+            material: urna.material?.id || "",
+            color: urna.color?.id || "",
+            modelo: urna.modelo?.id || "",
+        });
+        setModalOpen(true);
     };
 
-    const openDelete = (r) => { setSel(r); setOpenD(true); };
-    const doDelete = async () => {
-        try{
-            await api.delete(`${BASE.CATALOGO}/api/urnas/${sel.id}`);
-            setRows(prev => prev.filter(x => x.id !== sel.id));
-        }catch(e){ console.error(e); }
-        finally { setOpenD(false); setSel(null); }
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        try {
+            const payload = {
+                ...formData,
+                disponible: formData.disponible === "s" ? "s" : "n",
+                material: formData.material ? { id: formData.material } : null,
+                color: formData.color ? { id: formData.color } : null,
+                modelo: formData.modelo ? { id: formData.modelo } : null,
+            };
+            console.log("Payload enviado al backend:", payload);
+            await catalogoApi.updateUrna(editingUrna.id, payload);
+            await cargarUrnas();
+            closeModal();
+        } catch (err) {
+            console.error("Error al actualizar urna:", err);
+            alert("Ocurrió un error al actualizar la urna.");
+        }
+    };
+
+    // 🔹 Eliminar urna
+    const handleDelete = async (id) => {
+        if (!confirm("¿Seguro que deseas eliminar esta urna?")) return;
+        try {
+            await catalogoApi.deleteUrna(id);
+            await cargarUrnas();
+        } catch (err) {
+            console.error("Error al eliminar urna:", err);
+            alert("No se puede eliminar esta urna.");
+        }
+    };
+
+    const openCreateModal = () => {
+        setEditingUrna(null);
+        setFormData({
+            nombre: "",
+            descripcionCorta: "",
+            descripcionDetallada: "",
+            alto: "",
+            ancho: "",
+            profundidad: "",
+            peso: "",
+            precio: "",
+            disponible: "s",
+            estado: "Activo",
+            imagenPrincipal: "",
+            idInterno: "",
+            material: "",
+            color: "",
+            modelo: "",
+        });
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+        setEditingUrna(null);
     };
 
     return (
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h3 className="titulo-seccion">⚰️ Gestión de Urnas / Productos</h3>
-                <button className="btn btn-guardar" onClick={openCreate}>Nueva urna</button>
+                <h2>Gestión de Urnas</h2>
+                <button className="btn btn-primary" onClick={openCreateModal}>
+                    Nueva Urna
+                </button>
             </div>
 
-            <div className="filter-panel">
-                <input placeholder="Buscar por nombre, material o color..." value={q} onChange={e=>setQ(e.target.value)} />
-            </div>
+            <table className="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Disponible</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {urnas.map((u) => (
+                    <tr key={u.id}>
+                        <td>{u.id}</td>
+                        <td>{u.nombre}</td>
+                        <td>${u.precio}</td>
+                        <td>{u.disponible === "s" ? "Sí" : "No"}</td>
+                        <td>
+                            <button
+                                className="btn btn-sm btn-warning me-2"
+                                onClick={() => handleEdit(u)}
+                            >
+                                Editar
+                            </button>
+                            <button
+                                className="btn btn-sm btn-danger"
+                                onClick={() => handleDelete(u.id)}
+                            >
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
 
-            {loading ? <p>Cargando...</p> : (
-                <table className="table table-hover">
-                    <thead><tr>
-                        <th>ID</th><th>Nombre</th><th>Material</th><th>Color</th><th>Precio</th><th>Estado</th><th></th>
-                    </tr></thead>
-                    <tbody>
-                    {list.map(r=>(
-                        <tr key={r.id}>
-                            <td>{r.id}</td>
-                            <td>{r.nombre}</td>
-                            <td>{r.material?.nombre || r.material || "-"}</td>
-                            <td>{r.color?.nombre || r.color || "-"}</td>
-                            <td>${(r.precio||0).toLocaleString("es-CL")}</td>
-                            <td><span className={`badge ${r.estado==="Activo"?"badge-activo":"badge-inactivo"}`}>{r.estado}</span></td>
-                            <td className="text-end">
-                                <button className="btn btn-sm btn-outline-primary me-2" onClick={()=>openEdit(r)}>Editar</button>
-                                <button className="btn btn-sm btn-outline-danger" onClick={()=>openDelete(r)}>Eliminar</button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            )}
+            <AdminModal
+                open={modalOpen}
+                title={editingUrna ? "Editar Urna" : "Crear Urna"}
+                onClose={closeModal}
+                onSubmit={editingUrna ? handleUpdate : handleCreate}
+                submitText={editingUrna ? "Actualizar" : "Crear"}
+            >
+                {/* Campos del formulario */}
+                <div className="row g-2">
+                    <div className="col-md-6">
+                        <label className="form-label">Nombre</label>
+                        <input
+                            type="text"
+                            name="nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            className="form-control"
+                            required
+                        />
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">ID Interno</label>
+                        <input
+                            type="text"
+                            name="idInterno"
+                            value={formData.idInterno}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="col-md-12">
+                        <label className="form-label">Descripción Corta</label>
+                        <input
+                            type="text"
+                            name="descripcionCorta"
+                            value={formData.descripcionCorta}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="col-md-12">
+                        <label className="form-label">Descripción Detallada</label>
+                        <textarea
+                            name="descripcionDetallada"
+                            value={formData.descripcionDetallada}
+                            onChange={handleChange}
+                            className="form-control"
+                        ></textarea>
+                    </div>
+                    <div className="col-md-3">
+                        <label className="form-label">Alto (cm)</label>
+                        <input
+                            type="number"
+                            name="alto"
+                            value={formData.alto}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="col-md-3">
+                        <label className="form-label">Ancho (cm)</label>
+                        <input
+                            type="number"
+                            name="ancho"
+                            value={formData.ancho}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="col-md-3">
+                        <label className="form-label">Profundidad (cm)</label>
+                        <input
+                            type="number"
+                            name="profundidad"
+                            value={formData.profundidad}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="col-md-3">
+                        <label className="form-label">Peso (kg)</label>
+                        <input
+                            type="number"
+                            name="peso"
+                            value={formData.peso}
+                            onChange={handleChange}
+                            className="form-control"
+                        />
+                    </div>
+                    <div className="col-md-4">
+                        <label className="form-label">Precio ($)</label>
+                        <input
+                            type="number"
+                            name="precio"
+                            value={formData.precio}
+                            onChange={handleChange}
+                            className="form-control"
+                            required
+                        />
+                    </div>
+                    <div className="col-md-4">
+                        <label className="form-label">Disponible</label>
+                        <select
+                            name="disponible"
+                            value={formData.disponible}
+                            onChange={handleChange}
+                            className="form-select"
+                        >
+                            <option value="s">Sí</option>
+                            <option value="n">No</option>
+                        </select>
+                    </div>
+                    <div className="col-md-4">
+                        <label className="form-label">Estado</label>
+                        <select
+                            name="estado"
+                            value={formData.estado}
+                            onChange={handleChange}
+                            className="form-select"
+                        >
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
 
-            {/* Create */}
-            <AdminModal open={openC} title="Nueva urna" onClose={()=>setOpenC(false)} onSubmit={createItem} submitText="Crear">
-                <div className="form-container">
-                    <div className="mb-2"><label className="form-label">Nombre</label>
-                        <input name="nombre" className="form-control" value={f.nombre} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Material</label>
-                        <input name="material" className="form-control" value={f.material} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Color</label>
-                        <input name="color" className="form-control" value={f.color} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Precio</label>
-                        <input type="number" name="precio" className="form-control" value={f.precio} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Estado</label>
-                        <select name="estado" className="form-control" value={f.estado} onChange={onChange}>
-                            <option>Activo</option><option>Inactivo</option>
-                        </select></div>
+                    {/* Selects dinámicos */}
+                    <div className="col-md-4">
+                        <label className="form-label">Material</label>
+                        <select
+                            name="material"
+                            value={formData.material || ""}
+                            onChange={handleChange}
+                            className="form-select"
+                        >
+                            <option value="">Seleccionar</option>
+                            {materiales.map((m) => (
+                                <option key={m.id} value={m.id}>
+                                    {m.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-md-4">
+                        <label className="form-label">Color</label>
+                        <select
+                            name="color"
+                            value={formData.color || ""}
+                            onChange={handleChange}
+                            className="form-select"
+                        >
+                            <option value="">Seleccionar</option>
+                            {colores.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-md-4">
+                        <label className="form-label">Modelo</label>
+                        <select
+                            name="modelo"
+                            value={formData.modelo || ""}
+                            onChange={handleChange}
+                            className="form-select"
+                        >
+                            <option value="">Seleccionar</option>
+                            {modelos.map((m) => (
+                                <option key={m.id} value={m.id}>
+                                    {m.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </AdminModal>
-
-            {/* Edit */}
-            <AdminModal open={openE} title={`Editar urna #${sel?.id}`} onClose={()=>{setOpenE(false); setSel(null);}} onSubmit={updateItem}>
-                <div className="form-container">
-                    <div className="mb-2"><label className="form-label">Nombre</label>
-                        <input name="nombre" className="form-control" value={f.nombre} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Material</label>
-                        <input name="material" className="form-control" value={f.material} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Color</label>
-                        <input name="color" className="form-control" value={f.color} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Precio</label>
-                        <input type="number" name="precio" className="form-control" value={f.precio} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Estado</label>
-                        <select name="estado" className="form-control" value={f.estado} onChange={onChange}>
-                            <option>Activo</option><option>Inactivo</option>
-                        </select></div>
-                </div>
-            </AdminModal>
-
-            {/* Delete */}
-            <ConfirmDialog
-                open={openD}
-                title="Eliminar urna"
-                message={`¿Eliminar la urna "${sel?.nombre}"?`}
-                onCancel={()=>{setOpenD(false); setSel(null);}}
-                onConfirm={doDelete}
-            />
         </div>
     );
 }

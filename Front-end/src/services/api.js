@@ -96,75 +96,74 @@ export const usuariosApi = {
    ⚰️ CATÁLOGO (8002)
    ========================================= */
 export const catalogoApi = {
-  // Lista completa
-  getUrnas: () => api.get(`${BASE.CATALOGO}/api/urnas`),
+    // Lista completa
+    getUrnas: () => api.get(`${BASE.CATALOGO}/api/urnas`),
 
-  // Con filtros (cliente): construye query opcionalmente
-  getUrnasFiltered: ({ nombre, codigo, materialId, min, max } = {}) => {
-    const params = new URLSearchParams();
-    if (nombre) params.append("nombre", nombre);
-    if (codigo) params.append("codigo", codigo);
-    if (materialId) params.append("materialId", materialId);
-    if (min) params.append("min", min);
-    if (max) params.append("max", max);
+    // Con filtros
+    getUrnasFiltered: ({ nombre, codigo, materialId, min, max } = {}) => {
+        const params = new URLSearchParams();
+        if (nombre) params.append("nombre", nombre);
+        if (codigo) params.append("codigo", codigo);
+        if (materialId) params.append("materialId", materialId);
+        if (min) params.append("min", min);
+        if (max) params.append("max", max);
 
-    // Si tu backend acepta filtros por query, usa esta ruta:
-    // return api.get(`${BASE.CATALOGO}/api/urnas?${params.toString()}`);
+        return api.get(`${BASE.CATALOGO}/api/urnas`).then((r) => {
+            let data = r.data || [];
+            if (nombre) {
+                const t = nombre.toLowerCase();
+                data = data.filter((u) => u.nombre?.toLowerCase().includes(t));
+            }
+            if (codigo) {
+                const t = codigo.toLowerCase();
+                data = data.filter((u) => u.idInterno?.toLowerCase().includes(t));
+            }
+            if (materialId) data = data.filter((u) => String(u.material?.id) === String(materialId));
+            if (min) data = data.filter((u) => Number(u.precio || 0) >= Number(min));
+            if (max) data = data.filter((u) => Number(u.precio || 0) <= Number(max));
+            return { data };
+        });
+    },
 
-    // Si NO tienes filtros en el backend, trae todo y filtra en front:
-    return api.get(`${BASE.CATALOGO}/api/urnas`).then((r) => {
-      let data = r.data || [];
-      if (nombre) {
-        const t = nombre.toLowerCase();
-        data = data.filter((u) => u.nombre?.toLowerCase().includes(t));
-      }
-      if (codigo) {
-        const t = codigo.toLowerCase();
-        data = data.filter((u) => u.idInterno?.toLowerCase().includes(t));
-      }
-      if (materialId) data = data.filter((u) => String(u.material?.id) === String(materialId));
-      if (min) data = data.filter((u) => Number(u.precio || 0) >= Number(min));
-      if (max) data = data.filter((u) => Number(u.precio || 0) <= Number(max));
-      return { data };
-    });
-  },
+    getUrnaById: (id) => api.get(`${BASE.CATALOGO}/api/urnas/${id}`),
+    createUrna: (data) => api.post(`${BASE.CATALOGO}/api/urnas`, data),
 
-  getUrnaById: (id) => api.get(`${BASE.CATALOGO}/api/urnas/${id}`),
-  createUrna: (data) => api.post(`${BASE.CATALOGO}/api/urnas`, data),
-  updateUrna: (id, data) => api.put(`${BASE.CATALOGO}/api/urnas/${id}`, data),
-  deleteUrna: (id) => api.delete(`${BASE.CATALOGO}/api/urnas/${id}`),
+    // ✅ Cambiado de PUT → PATCH
+    updateUrna: (id, data) => api.patch(`${BASE.CATALOGO}/api/urnas/${id}`, data),
 
-  getMateriales: async () => {
-    const hit = getCache("materiales");
-    if (hit) return { data: hit };
-    const res = await api.get(`${BASE.CATALOGO}/api/materiales`);
-    setCache("materiales", res.data);
-    return res;
-  },
-  getColores: async () => {
-    const hit = getCache("colores");
-    if (hit) return { data: hit };
-    const res = await api.get(`${BASE.CATALOGO}/api/colores`);
-    setCache("colores", res.data);
-    return res;
-  },
-  getModelos: async () => {
-    const hit = getCache("modelos");
-    if (hit) return { data: hit };
-    const res = await api.get(`${BASE.CATALOGO}/api/modelos`);
-    setCache("modelos", res.data);
-    return res;
-  },
+    deleteUrna: (id) => api.delete(`${BASE.CATALOGO}/api/urnas/${id}`),
 
-  uploadImagen: (urnaId, archivo, principal = true) => {
-    const formData = new FormData();
-    formData.append("archivo", archivo);
-    formData.append("principal", principal);
-    return api.post(`${BASE.CATALOGO}/api/imagenes/${urnaId}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-  },
-};
+    getMateriales: async () => {
+        const hit = getCache("materiales");
+        if (hit) return { data: hit };
+        const res = await api.get(`${BASE.CATALOGO}/api/materiales`);
+        setCache("materiales", res.data);
+        return res;
+    },
+    getColores: async () => {
+        const hit = getCache("colores");
+        if (hit) return { data: hit };
+        const res = await api.get(`${BASE.CATALOGO}/api/colores`);
+        setCache("colores", res.data);
+        return res;
+    },
+    getModelos: async () => {
+        const hit = getCache("modelos");
+        if (hit) return { data: hit };
+        const res = await api.get(`${BASE.CATALOGO}/api/modelos`);
+        setCache("modelos", res.data);
+        return res;
+    },
+
+    uploadImagen: (urnaId, archivo, principal = true) => {
+        const formData = new FormData();
+        formData.append("archivo", archivo);
+        formData.append("principal", principal);
+        return api.post(`${BASE.CATALOGO}/api/imagenes/${urnaId}`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+    },
+};;
 
 /* =========================================
    📦 INVENTARIO (8003)

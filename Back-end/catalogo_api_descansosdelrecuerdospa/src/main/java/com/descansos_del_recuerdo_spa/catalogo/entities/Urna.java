@@ -34,9 +34,6 @@ public class Urna {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
-    @Column(nullable = false)
-    private Integer stock = 0;
-
     @Column(nullable = false, columnDefinition = "ENUM('s','n') DEFAULT 's'")
     private String disponible = "s";
 
