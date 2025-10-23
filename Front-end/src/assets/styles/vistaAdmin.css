@@ -30,7 +30,9 @@ body {
 /* Contenedor general del admin */
 .admin-layout {
     display: flex;
-    min-height: 100vh;
+    min-height: 100%;
+    min-height: 100dvh; /* soporte moderno */
+    position: relative;
 }
 
 /* ===========================================
@@ -124,10 +126,14 @@ body {
 
 .dashboard-container {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 2rem;
     background: var(--color-fondo);
+    min-height: calc(100vh - 100px); /* deja espacio para footer */
+    overflow-y: auto; /* permite scroll interno si es largo */
+    z-index: 1; /* debajo del footer si este es fixed */
 }
-
 .dashboard-cards {
     display: flex;
     flex-wrap: wrap;
