@@ -213,3 +213,24 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-secundario);
 }
+
+/* ======================================================
+   🔧 Fix: eliminar borde marrón en botones al hacer hover/focus
+   ====================================================== */
+.btn:focus,
+.btn:active:focus,
+.btn:focus-visible,
+.btn:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Aplicar también a los botones dentro del modal */
+.modal .btn:focus,
+.modal .btn-success:focus,
+.modal .btn-success:hover,
+.modal .btn-success:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
