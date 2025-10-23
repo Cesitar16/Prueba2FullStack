@@ -2,29 +2,24 @@
    🌿 ESTILOS BASE – Descansos del Recuerdo SPA
    =========================================== */
 
-:root {
-  --color-principal: #5a4634; /* tono madera */
-  --color-secundario: #d4af37; /* dorado */
-  --color-fondo: #f9f7f3;
-  --color-texto: #333;
-  --color-muted: #6c757d;
-  --radius-base: 12px;
-  --sombra-base: 0 3px 6px rgba(0, 0, 0, 0.1);
-  --transicion: all 0.3s ease;
-}
+@import url("variables.css");
 
 body {
   font-family: "Poppins", "Segoe UI", sans-serif;
+  background: url("../img/FondoCatalogo.png") no-repeat center center fixed;
+  background-size: cover;
+  background-attachment: fixed;
   background-color: var(--color-fondo);
   color: var(--color-texto);
   margin: 0;
-  padding: 0;
+  padding-top: 70px; /* por el navbar sticky */
+  overflow-x: hidden;
 }
 
-h1,
-h2,
-h3,
-h4 {
+/* -------------------------------------------
+   🎨 Colores generales
+------------------------------------------- */
+h1, h2, h3, h4 {
   color: var(--color-principal);
   font-weight: 600;
 }
@@ -42,46 +37,243 @@ a:hover {
 /* ===========================================
    🧭 NAVBAR
    =========================================== */
-
-.navbar-custom {
-  background-color: var(--color-principal);
-  box-shadow: var(--sombra-base);
+.custom-navbar {
+  background-color: rgba(75, 46, 23, 0.95); /* marrón cálido translúcido */
+  backdrop-filter: blur(6px);
+  color: #fff !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.3s ease-in-out;
 }
 
-.navbar-brand {
-  color: var(--color-secundario) !important;
+.custom-navbar .navbar-brand {
+  color: #f6e8c5 !important;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
-.nav-link {
-  color: #f8f9fa !important;
-  margin-right: 15px;
-  transition: var(--transicion);
-}
-
-.nav-link:hover {
-  color: var(--color-secundario) !important;
-}
-
-.btn-logout {
-  background-color: var(--color-secundario);
-  border: none;
-  color: #fff;
+.custom-navbar .nav-link {
+  color: #f9f9f9 !important;
   font-weight: 500;
-  border-radius: 8px;
-  padding: 6px 12px;
-  transition: var(--transicion);
+  margin-right: 15px;
+  transition: color 0.2s ease-in-out;
 }
 
-.btn-logout:hover {
-  background-color: #b9962f;
+.custom-navbar .nav-link:hover {
+  color: #ffd37a !important;
+}
+
+.custom-navbar .btn-outline-light {
+  color: #fff !important;
+  border-color: #fff !important;
+  font-weight: 500;
+}
+
+.custom-navbar .btn-outline-light:hover {
+  background-color: #fff !important;
+  color: #4b2e17 !important;
 }
 
 /* ===========================================
-   💀 CATÁLOGO DE URNAS
+   🌅 HERO SECTION – “Honrando memorias”
    =========================================== */
 
+.hero-section {
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.75),
+      rgba(250, 242, 230, 0.88)
+    ),
+    url("/src/assets/img/FondoCatalogo.png") center/cover no-repeat;
+  padding: 3rem 1rem;
+  border-radius: 18px;
+  text-align: center;
+  color: #3a2615;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(3px);
+}
+
+.hero-section h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--color-principal);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.5px;
+}
+
+.hero-section p {
+  font-size: 1.1rem;
+  color: #5a4431;
+  margin-top: 0.5rem;
+}
+
+/* ===========================================
+   🎨 BLOQUE DE FILTROS – CATÁLOGO (versión final premium)
+   =========================================== */
+
+.filter-card {
+  background: linear-gradient(
+    180deg,
+    rgba(243, 230, 210, 0.96) 0%,
+    rgba(236, 219, 190, 0.95) 100%
+  );
+  border-radius: 16px;
+  border: 1px solid rgba(120, 90, 55, 0.25);
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15),
+    inset 0 0 20px rgba(255, 255, 255, 0.15);
+  padding: 1.8rem 2rem;
+  margin-bottom: 2rem;
+  color: #3b2b1a;
+}
+
+.filter-card .form-label {
+  font-weight: 600;
+  color: #3b2b1a;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+/* ===========================================
+   🪶 CAMPOS DE ENTRADA ELEGANTES
+   =========================================== */
+.filter-card .form-control,
+.filter-card select {
+  border-radius: 10px;
+  border: 1.5px solid rgba(100, 70, 35, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 252, 247, 0.95),
+    rgba(247, 236, 215, 0.9)
+  );
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  color: #3b2b1a;
+  font-family: "Poppins", sans-serif;
+}
+
+.filter-card .form-control::placeholder {
+  color: #8b715a;
+  opacity: 0.8;
+}
+
+.filter-card .form-control:focus,
+.filter-card select:focus {
+  border-color: #b6933f;
+  background: #fffaf3;
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.25),
+    inset 0 2px 6px rgba(0, 0, 0, 0.05);
+  outline: none;
+}
+
+/* ===========================================
+   🪞 SELECT (COMBO BOX)
+   =========================================== */
+.filter-card select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 252, 247, 0.95),
+    rgba(247, 236, 215, 0.9)
+  ),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%235a3d22' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5l6 6 6-6h-12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1rem;
+  cursor: pointer;
+}
+
+/* Color del menú desplegable */
+.filter-card select option {
+  background-color: #f4e6c7;
+  color: #3a2615;
+  font-weight: 500;
+}
+
+/* ===========================================
+   ✨ BOTONES DE FILTRO – CENTRADOS Y LUJOSOS
+   =========================================== */
+.filter-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+}
+
+/* Botón principal (Filtrar) */
+.btn-filtrar {
+  background: linear-gradient(180deg, #6e4a28 0%, #4b2e17 100%);
+  color: #fff;
+  border: 1px solid rgba(50, 30, 15, 0.4);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 0.65rem 1.6rem;
+  border-radius: 10px;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-filtrar:hover {
+  background: linear-gradient(180deg, #8b5e36 0%, #59381f 100%);
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.2);
+}
+
+.btn-filtrar:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Botón secundario (Limpiar filtros) */
+.btn-limpiar {
+  background: linear-gradient(180deg, #fffaf3 0%, #f1e0c8 100%);
+  border: 1px solid rgba(80, 50, 25, 0.35);
+  color: #3b2b1a;
+  font-weight: 500;
+  padding: 0.65rem 1.6rem;
+  border-radius: 10px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 3px rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-limpiar:hover {
+  background: linear-gradient(180deg, #f9edd7 0%, #f0dcc0 100%);
+  border-color: rgba(90, 60, 30, 0.4);
+  transform: translateY(-2px);
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+/* ===========================================
+   🌟 RESPONSIVE FILTROS
+   =========================================== */
+@media (max-width: 768px) {
+  .filter-actions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .btn-filtrar,
+  .btn-limpiar {
+    width: 100%;
+  }
+}
+
+
+/* ===========================================
+   ⚱️ CATÁLOGO DE URNAS
+   =========================================== */
 .titulo-seccion {
   color: var(--color-principal);
   text-align: center;
@@ -90,75 +282,164 @@ a:hover {
   margin-bottom: 1.5rem;
 }
 
-.hero-section {
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.6),
-      rgba(255, 255, 255, 0.8)
-    ),
-    url("/src/assets/img/Imagen1Titulo.jpg") center/cover no-repeat;
-  padding: 3rem 1rem;
-  border-radius: var(--radius-base);
-  text-align: center;
-}
-
-.hero-section h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--color-principal);
-}
-
-.hero-section p {
-  font-size: 1.1rem;
-  color: var(--color-muted);
-}
-
-/* --- Tarjetas de urnas --- */
+/* ===========================================
+   ⚱️ TARJETAS DE URNAS – CORREGIDAS Y ELEGANTES
+   =========================================== */
 
 .product-card {
+  background: linear-gradient(
+      180deg,
+      rgba(242, 230, 210, 0.97) 0%,
+      rgba(232, 216, 190, 0.95) 40%,
+      rgba(220, 200, 170, 0.94) 100%
+    );
   border: none;
-  border-radius: var(--radius-base);
-  background-color: #fff;
-  box-shadow: var(--sombra-base);
-  transition: var(--transicion);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.25),
+    inset 0 0 20px rgba(255, 250, 240, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  filter: saturate(0.95) brightness(0.98);
+  backdrop-filter: blur(3px);
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.35),
+    inset 0 0 25px rgba(255, 255, 255, 0.2);
+  filter: saturate(1.05) brightness(1);
 }
 
+/* 🖼 Imagen superior */
 .product-card img {
   height: 230px;
+  width: 100%;
   object-fit: cover;
-  border-top-left-radius: var(--radius-base);
-  border-top-right-radius: var(--radius-base);
+  background-color: #d7c2a6;
+  border: none;
+  display: block;
 }
 
-.card-title {
-  color: var(--color-principal);
-  font-weight: 600;
+/* 📜 Cuerpo del card */
+.product-card .card-body {
+  background: transparent;
+  padding: 1rem 1.25rem;
+  font-family: "Poppins", sans-serif;
+  color: #3f2c1a;
+  border: none;
 }
 
-.badge {
+/* 🏷️ Títulos */
+.product-card .card-title {
+  font-family: "Playfair Display", serif;
+  color: #3a2615;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+  margin-bottom: 0.4rem;
+}
+
+/* 📄 Texto */
+.product-card .card-text {
+  color: #5a4431;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 💰 Precio */
+.product-card strong {
+  color: #3b2b1a;
+  font-weight: 700;
+}
+
+/* 🏷️ Etiquetas de stock */
+.badge.bg-success {
+  background-color: #3e8d53 !important;
+  color: #fff !important;
+}
+
+.badge.bg-danger {
+  background-color: #b4372f !important;
+  color: #fff !important;
+}
+
+/* 💡 Hover efecto interior */
+.product-card:hover .card-body {
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.05);
+}
+
+/* ===========================================
+   ⚱️ SECCIÓN INFERIOR – PRECIO Y BOTÓN (FIX)
+   =========================================== */
+
+.product-card .card-footer {
+  background: linear-gradient(
+    180deg,
+    rgba(235, 219, 193, 0.95) 0%,
+    rgba(224, 205, 172, 0.96) 100%
+  );
+  border: none;
+  padding: 1.1rem 1.3rem 1.3rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  gap: 0.85rem; /* <-- espaciado vertical entre secciones */
+}
+
+/* 💵 Fila del precio + stock */
+.product-card .price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* 💵 Precio */
+.product-card .price-row strong {
+  color: #3b2b1a;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* 🏷️ Badge */
+.product-card .price-row .badge {
   font-size: 0.8rem;
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+
+/* 🛒 Botón agregar */
+.product-card .card-footer .btn-outline-primary {
+  width: 100%;
+  font-size: 0.9rem;
+  letter-spacing: 0.2px;
+  color: #4b2e17;
+  border-color: #4b2e17;
+  border-width: 1.4px;
   font-weight: 500;
-  padding: 6px 10px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  transition: all 0.25s ease-in-out;
+  padding: 0.55rem 0; /* altura más elegante */
 }
 
-.btn-outline-primary {
-  color: var(--color-principal);
-  border-color: var(--color-principal);
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--color-principal);
+.product-card .card-footer .btn-outline-primary:hover {
+  background-color: #4b2e17;
   color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
 
 /* ===========================================
    🛒 CARRITO MODAL
    =========================================== */
-
 .carrito-item {
   display: flex;
   justify-content: space-between;
@@ -180,22 +461,18 @@ a:hover {
   color: var(--color-principal);
 }
 
-.btn-comprar {
+.modal .btn-success {
   background-color: var(--color-secundario);
-  color: #fff;
-  font-weight: 600;
-  border-radius: 10px;
-  transition: var(--transicion);
+  border: none;
 }
 
-.btn-comprar:hover {
-  background-color: #b28e27;
+.modal .btn-success:hover {
+  background-color: #b9962f;
 }
 
 /* ===========================================
-   🧾 MODAL DE URNA DETALLE
+   💀 MODAL URNA DETALLE
    =========================================== */
-
 .modal-header {
   background-color: var(--color-principal) !important;
 }
@@ -209,20 +486,14 @@ a:hover {
   box-shadow: var(--sombra-base);
 }
 
-.modal-body p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
 .input-group-text {
   background-color: var(--color-principal);
   color: #fff;
 }
 
 /* ===========================================
-   📊 DASHBOARD Y TABLAS ADMIN
+   📊 TABLAS Y ADMIN
    =========================================== */
-
 .table {
   background-color: #fff;
   border-radius: var(--radius-base);
@@ -239,6 +510,9 @@ a:hover {
   background-color: #f2f0eb;
 }
 
+/* ===========================================
+   🧱 BOTONES
+   =========================================== */
 .btn {
   border-radius: 8px !important;
   transition: var(--transicion);
@@ -249,17 +523,8 @@ a:hover {
 }
 
 /* ===========================================
-   🌎 NOSOTROS
+   🌎 SECCIÓN NOSOTROS
    =========================================== */
-
-.text-muted {
-  color: var(--color-muted) !important;
-}
-
-.bi {
-  color: var(--color-secundario);
-}
-
 section img {
   max-width: 100%;
   height: auto;
@@ -269,146 +534,33 @@ section img {
 /* ===========================================
    📞 FOOTER
    =========================================== */
-
 footer {
-  background-color: var(--color-principal);
-  color: #f8f9fa;
-  padding: 1.5rem 0;
+  background-color: rgba(45, 25, 10, 0.92);
+  color: #f8e5c5;
+  padding: 1.8rem 0;
   text-align: center;
-  box-shadow: var(--sombra-base);
+  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 220, 150, 0.3);
+}
+
+footer h5 {
+  color: #f8dba0;
 }
 
 footer a {
-  color: var(--color-secundario);
+  color: #ffd28b;
   text-decoration: none;
   margin: 0 8px;
 }
 
 footer a:hover {
   color: #fff;
+  text-decoration: underline;
 }
 
 /* ===========================================
-   ⚠️ 404 PAGE
+   🛍️ BOTÓN FLOTANTE DE CARRITO
    =========================================== */
-
-.display-1 {
-  font-size: 6rem;
-  color: var(--color-secundario);
-}
-
-/* ===========================================
-   🔍 FILTROS Y FORMULARIOS
-   =========================================== */
-
-.filter-panel input {
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  font-size: 1rem;
-}
-
-form label {
-  color: var(--color-principal);
-  font-weight: 500;
-}
-
-form .form-control {
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: var(--transicion);
-}
-
-form .form-control:focus {
-  border-color: var(--color-secundario);
-  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ===========================================
-   🖥️ RESPONSIVE DESIGN
-   =========================================== */
-
-@media (max-width: 992px) {
-  .hero-section {
-    padding: 2rem 1rem;
-  }
-
-  .product-card img {
-    height: 200px;
-  }
-
-  .display-1 {
-    font-size: 4.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar-brand {
-    font-size: 1rem;
-  }
-
-  .titulo-seccion {
-    font-size: 1.4rem;
-  }
-
-  .product-card img {
-    height: 180px;
-  }
-
-  footer {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .hero-section h1 {
-    font-size: 1.6rem;
-  }
-
-  .hero-section p {
-    font-size: 0.95rem;
-  }
-}
-
-/* NAVBAR visible (no translúcida) */
-.navbar-custom {
-  background-color: #f8f9fa !important; /* barra clara sólida */
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
-  backdrop-filter: none; /* evita transparencia */
-}
-.navbar-custom .navbar-brand { color: var(--color-principal) !important; }
-.navbar-custom .nav-link { color: #333 !important; }
-.navbar-custom .nav-link:hover { color: var(--color-principal) !important; }
-
-/* separa contenido si usas fixed-top */
-body { padding-top: 70px; }
-
-/* HERO (encabezado del catálogo) */
-.hero-section {
-  background: linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.8)),
-              url("/src/assets/img/Imagen1Titulo.jpg") center/cover no-repeat;
-  padding: 3rem 1rem;
-  border-radius: 12px;
-  text-align: center;
-}
-.hero-section h1 { font-family: "Playfair Display", serif; font-size: 2.6rem; }
-.hero-section p  { color: var(--color-muted); }
-
-/* TARJETA DE FILTROS */
-.filter-card {
-  background: #f5f5f5;
-  border-radius: 12px;
-  padding: 1.2rem;
-  border: 1px solid #ececec;
-}
-.filter-card .form-label { font-weight: 600; color: var(--color-principal); }
-
-/* BOTÓN FLOTANTE CARRITO */
 .floating-cart-btn {
   position: fixed;
   right: 20px;
@@ -420,67 +572,53 @@ body { padding-top: 70px; }
   border-radius: 50%;
   background: var(--color-principal);
   color: #fff;
-  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
   display: grid;
   place-items: center;
-  transition: transform .2s ease, background .2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
+
 .floating-cart-btn:hover {
   background: var(--color-secundario);
-  transform: translateY(-2px);
-}
-.floating-cart-btn i { font-size: 1.3rem; }
-
-/* ======================================================
-   🔧 Corrige sombra marrón en botones del modal
-   ====================================================== */
-.modal .btn-success,
-.modal .btn-success:focus,
-.modal .btn-success:hover,
-.modal .btn-success:active {
-  box-shadow: none !important;
-  outline: none !important;
-  border: none !important;
+  transform: translateY(-3px);
 }
 
-/* Navbar general */
-.custom-navbar {
-  background-color: #4b2e17; /* marrón cálido */
-  color: white !important;
-  transition: background-color 0.3s ease-in-out;
+.floating-cart-btn i {
+  font-size: 1.3rem;
 }
 
-.custom-navbar .nav-link {
-  color: #f2f2f2 !important;
-  font-weight: 500;
-  transition: color 0.2s ease-in-out;
+/* ===========================================
+   🖥️ RESPONSIVE DESIGN
+   =========================================== */
+@media (max-width: 992px) {
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+  .product-card img {
+    height: 200px;
+  }
 }
 
-.custom-navbar .nav-link:hover {
-  color: #ffd37a !important;
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  .titulo-seccion {
+    font-size: 1.4rem;
+  }
+  .product-card img {
+    height: 180px;
+  }
+  footer {
+    font-size: 0.9rem;
+  }
 }
 
-.custom-navbar .navbar-brand {
-  color: #ffffff !important;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.custom-navbar .btn-outline-light {
-  color: #fff !important;
-  border-color: #fff !important;
-}
-
-.custom-navbar .btn-outline-light:hover {
-  background-color: #fff !important;
-  color: #4b2e17 !important;
-}
-
-.dropdown-menu {
-  background-color: #fff;
-  border-radius: 10px;
-}
-
-.dropdown-item:hover {
-  background-color: #f5f0ea;
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 1.6rem;
+  }
+  .hero-section p {
+    font-size: 0.95rem;
+  }
 }

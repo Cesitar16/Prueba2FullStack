@@ -12,7 +12,7 @@ export function UrnaCard({ urna, onVerDetalle }) {
       nombre: urna.nombre,
       precio: urna.precio,
       cantidad: 1,
-      img: urna.imagenPrincipal, // ahora sí viene de la API
+      img: urna.imagenPrincipal,
     });
   };
 
@@ -25,7 +25,7 @@ export function UrnaCard({ urna, onVerDetalle }) {
   return (
     <div className="col">
       <div className="card h-100 product-card shadow-sm">
-        {/* Botón para abrir modal con detalle */}
+        {/* Imagen clickeable para abrir modal */}
         <button
           className="btn p-0 border-0 text-start w-100"
           data-bs-toggle="modal"
@@ -40,10 +40,13 @@ export function UrnaCard({ urna, onVerDetalle }) {
           />
         </button>
 
+        {/* Información principal */}
         <div className="card-body">
-          {/* 👇 Nuevo: Código interno */}
           <small className="text-muted d-block mb-1">
-            Código: <span className="fw-semibold">{urna.idInterno || `#${urna.id}`}</span>
+            Código:{" "}
+            <span className="fw-semibold">
+              {urna.idInterno || `#${urna.id}`}
+            </span>
           </small>
 
           <h5 className="card-title">{urna.nombre}</h5>
@@ -51,40 +54,42 @@ export function UrnaCard({ urna, onVerDetalle }) {
             {urna.descripcionCorta || "Urna funeraria elegante"}
           </p>
 
-          <small className="text-muted">
+          <small className="text-muted d-block">
             Modelo: {urna.modelo?.nombre || "N/A"}
           </small>
-          <br />
-          <small className="text-muted">
+          <small className="text-muted d-block">
             Material: {urna.material?.nombre || "N/A"}
           </small>
-          <br />
-          <small className="text-muted">
+          <small className="text-muted d-block">
             Color: {urna.color?.nombre || "N/A"}
           </small>
         </div>
 
-        <div className="card-footer bg-white border-0">
-          <div className="d-flex justify-content-between align-items-center">
-            <strong className="text-dark">
-              ${urna.precio?.toLocaleString("es-CL")}
-            </strong>
-
-            {/* Alerta de stock */}
-            {urna.stock < 5 ? (
-              <span className="badge bg-danger">Stock crítico ({urna.stock})</span>
-            ) : (
-              <span className="badge bg-success">Stock: {urna.stock}</span>
-            )}
+        {/* Pie de tarjeta */}
+        <div className="card-footer">
+          {/* 💰 Fila de precio + stock */}
+          <div className="price-row">
+            <strong>${urna.precio?.toLocaleString("es-CL")}</strong>
+            <span
+              className={`badge ${
+                urna.stock < 5 ? "bg-danger" : "bg-success"
+              }`}
+            >
+              {urna.stock < 5
+                ? `Stock crítico (${urna.stock})`
+                : `Stock: ${urna.stock}`}
+            </span>
           </div>
 
+          {/* 🛒 Botón agregar */}
           <button
-            className="btn btn-sm btn-outline-primary mt-2 w-100"
+            className="btn btn-sm btn-outline-primary"
             onClick={handleAgregar}
           >
             <i className="bi bi-cart-plus me-1"></i> Agregar al carrito
           </button>
         </div>
+
       </div>
     </div>
   );
