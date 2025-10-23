@@ -87,7 +87,7 @@ export default function InventarioAdmin() {
                 <button className="btn btn-guardar" onClick={openCreate}>Nuevo registro</button>
             </div>
 
-            <div className="filter-panel">
+            <div className="filter-panel mb-3">
                 <input placeholder="Buscar por urnaId, ubicación, estado..." value={q} onChange={e=>setQ(e.target.value)} />
             </div>
 

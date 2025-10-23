@@ -94,7 +94,7 @@ export default function UsuariosAdmin() {
                 <button className="btn btn-guardar" onClick={openCreateModal}>Nuevo usuario</button>
             </div>
 
-            <div className="filter-panel">
+            <div className="filter-panel mb-3">
                 <input placeholder="Buscar: nombre, correo, rol, estado..." value={q} onChange={e=>setQ(e.target.value)} />
             </div>
 

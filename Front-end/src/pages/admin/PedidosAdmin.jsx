@@ -54,7 +54,7 @@ export default function PedidosAdmin() {
                 <h3 className="titulo-seccion">🧾 Gestión de Pedidos</h3>
             </div>
 
-            <div className="filter-panel">
+            <div className="filter-panel mb-3">
                 <input placeholder="Buscar por ID, cliente, estado..." value={q} onChange={e=>setQ(e.target.value)} />
             </div>
 
