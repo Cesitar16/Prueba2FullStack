@@ -116,7 +116,7 @@ export function Catalogo() {
           <div className="col-md-3">
             <label className="form-label">Material</label>
             <select
-              className="form-select"
+              className="form-control"
               value={materialId}
               onChange={(e) => setMaterialId(e.target.value)}
             >
@@ -148,20 +148,19 @@ export function Catalogo() {
               />
             </div>
           </div>
+        </div>
 
-          <div className="col-12 d-flex gap-2">
-            <button className="btn btn-primary" onClick={handleFiltrar}>
-              Filtrar
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              onClick={limpiarFiltros}
-            >
-              Limpiar filtros
-            </button>
-          </div>
+        {/* Botones de acción */}
+        <div className="filter-actions mt-3">
+          <button className="btn-filtrar" onClick={handleFiltrar}>
+            <i className="bi bi-funnel-fill me-2"></i> Filtrar
+          </button>
+          <button className="btn-limpiar" onClick={limpiarFiltros}>
+            <i className="bi bi-eraser-fill me-2"></i> Limpiar filtros
+          </button>
         </div>
       </div>
+
 
       {/* TÍTULO */}
       <h2 className="titulo-seccion">Nuestro Catálogo</h2>

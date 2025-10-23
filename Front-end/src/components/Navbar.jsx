@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import {Link, NavLink, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../assets/styles/estilos.css";
 
@@ -54,46 +54,47 @@ export function Navbar() {
             </li>
 
             {/* 👑 Solo visible si el usuario es Administrador */}
-              {isAuthenticated && usuario?.rol?.toLowerCase() === "administrador" && (
-                  <li className="nav-item dropdown">
-                      <a
-                          className="nav-link dropdown-toggle fw-semibold"
-                          href="#"
-                          id="navbarAdminDropdown"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                      >
-                          🛠 Vista Admin
-                      </a>
-                      <ul className="dropdown-menu animate__animated animate__fadeInUp" aria-labelledby="navbarAdminDropdown">
-                          <li>
-                              <NavLink className="dropdown-item" to="/admin/dashboard">
-                                  📊 Dashboard
-                              </NavLink>
-                          </li>
-                          <li>
-                              <NavLink className="dropdown-item" to="/admin/usuarios">
-                                  👥 Gestión de Usuarios
-                              </NavLink>
-                          </li>
-                          <li>
-                              <NavLink className="dropdown-item" to="/admin/urnas">
-                                  ⚱️ Gestión de Urnas
-                              </NavLink>
-                          </li>
-                          <li>
-                              <NavLink className="dropdown-item" to="/admin/inventario">
-                                  📦 Inventario
-                              </NavLink>
-                          </li>
-                          <li>
-                              <NavLink className="dropdown-item" to="/admin/pedidos">
-                                  🧾 Pedidos
-                              </NavLink>
-                          </li>
-                      </ul>
-                  </li>
+            {isAuthenticated &&
+              usuario?.rol?.toLowerCase() === "administrador" && (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle text-warning fw-bold"
+                    href="#"
+                    id="adminDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="bi bi-speedometer2 me-1"></i> Vista Admin
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end shadow">
+                    <li>
+                      <Link className="dropdown-item" to="/admin/dashboard">
+                        📊 Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/admin/urnas">
+                        ⚰️ Urnas
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/admin/inventario">
+                        📦 Inventario
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/admin/usuarios">
+                        👤 Usuarios
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/admin/pedidos">
+                        🧾 Pedidos
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
               )}
           </ul>
 
