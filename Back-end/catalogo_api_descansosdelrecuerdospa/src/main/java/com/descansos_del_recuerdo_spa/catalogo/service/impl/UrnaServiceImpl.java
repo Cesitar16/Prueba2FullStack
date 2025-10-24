@@ -67,6 +67,10 @@ public class UrnaServiceImpl implements UrnaService {
         urna.setNombre(dto.getNombre());
         urna.setDescripcionCorta(dto.getDescripcionCorta());
         urna.setDescripcionDetallada(dto.getDescripcionDetallada());
+        urna.setIdInterno(dto.getIdInterno()); // 👈 faltaba esto
+
+        if (dto.getStock() != null) // 👈 si agregaste stock en el DTO
+            urna.setStock(dto.getStock());
 
         if (dto.getPrecio() != null)
             urna.setPrecio(BigDecimal.valueOf(dto.getPrecio()));
@@ -102,6 +106,7 @@ public class UrnaServiceImpl implements UrnaService {
             urna.setModelo(mod);
         }
     }
+
 
     @Override
     public void delete(Long id) {

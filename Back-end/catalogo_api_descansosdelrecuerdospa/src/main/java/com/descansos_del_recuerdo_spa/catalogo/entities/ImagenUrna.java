@@ -1,26 +1,22 @@
 package com.descansos_del_recuerdo_spa.catalogo.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Entity
-@Table(name = "imagen_urna")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "imagen_urna")
 public class ImagenUrna {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String url;
-
-    @Column(nullable = false)
-    private Boolean principal = false;
+    private String nombre; // 👈 nombre del archivo físico
+    private String url;    // 👈 URL pública (por ejemplo /uploads/imagen.jpg)
+    private boolean principal = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "urna_id")

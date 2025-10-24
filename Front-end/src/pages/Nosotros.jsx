@@ -1,106 +1,113 @@
 import "../assets/styles/estilos.css";
+import "../assets/styles/nosotros.css";
+import urnaImage from "../assets/img/UrnaImageNosotros.jpg";
 
-/**
- * Nosotros.jsx
- * Página institucional "Descansos del Recuerdo SPA"
- */
 export function Nosotros() {
   return (
-    <div className="container my-5">
-      {/* 🕊️ Sección principal */}
-      <section className="text-center mb-5">
-        <h1 className="titulo-seccion">Descansos del Recuerdo SPA</h1>
-        <p className="lead text-muted mt-3">
-          Honramos la memoria de tus seres queridos con urnas funerarias de
-          calidad, diseño y respeto.
-        </p>
-      </section>
-
-      {/* 📸 Imagen principal */}
-      <section className="text-center mb-5">
-        <img
-          src="http://localhost/storage/image-about.webp"
-          alt="Urnas artesanales"
-          className="img-fluid rounded shadow-sm"
-          style={{ maxHeight: "400px", objectFit: "cover" }}
-        />
-      </section>
-
-      {/* 👥 Quiénes somos */}
-      <section className="mb-5">
-        <h3 className="titulo-seccion">Quiénes Somos</h3>
-        <p className="text-muted fs-5">
-          Somos una empresa chilena dedicada a la fabricación y distribución de
-          urnas funerarias con más de 35 años de trayectoria.  
-          Combinamos tradición artesanal con materiales de alta calidad para
-          ofrecer un producto digno, resistente y lleno de significado.
-        </p>
-      </section>
-
-      {/* 🌱 Misión */}
-      <section className="mb-5">
-        <h3 className="titulo-seccion">Nuestra Misión</h3>
-        <p className="text-muted fs-5">
-          Acompañar a las familias en momentos difíciles, brindando productos y
-          servicios que reflejen respeto, amor y cuidado hacia quienes ya no
-          están físicamente, pero permanecen en nuestros recuerdos.
-        </p>
-      </section>
-
-      {/* 💛 Valores */}
-      <section className="mb-5">
-        <h3 className="titulo-seccion">Nuestros Valores</h3>
-        <div className="row text-center mt-4">
-          <div className="col-md-4 mb-4">
-            <i className="bi bi-heart display-5 text-warning"></i>
-            <h5 className="mt-2">Respeto</h5>
-            <p className="text-muted">
-              Cada urna es elaborada con el máximo cuidado, como símbolo de amor
-              eterno hacia nuestros seres queridos.
+    <div className="nosotros-page">
+      {/* Sección principal */}
+      <section className="nosotros-hero container py-5">
+        <div className="row align-items-center g-4">
+          {/* Texto principal */}
+          <div className="col-lg-7 text-section">
+            <h1 className="nosotros-title">Descansos del Recuerdo</h1>
+            <p className="nosotros-subtitle">
+              Honramos la memoria de tus seres queridos con urnas funerarias de
+              calidad, diseño y respeto.
             </p>
           </div>
-          <div className="col-md-4 mb-4">
-            <i className="bi bi-brush display-5 text-warning"></i>
-            <h5 className="mt-2">Artesanía</h5>
-            <p className="text-muted">
-              Fusionamos técnicas tradicionales con diseños modernos, logrando
-              piezas únicas y elegantes.
-            </p>
-          </div>
-          <div className="col-md-4 mb-4">
-            <i className="bi bi-leaf display-5 text-warning"></i>
-            <h5 className="mt-2">Sustentabilidad</h5>
-            <p className="text-muted">
-              Comprometidos con el medio ambiente, utilizamos materiales
-              responsables y procesos ecológicos.
-            </p>
+
+          {/* Imagen decorativa */}
+          <div className="col-lg-5 text-center">
+            <img
+              src={urnaImage}
+              alt="Urna funeraria"
+              className="img-fluid urna-nosotros"
+            />
           </div>
         </div>
       </section>
 
-      {/* 📞 Contacto */}
-      <section className="text-center my-5">
-        <h3 className="titulo-seccion">Contáctanos</h3>
-        <p className="text-muted fs-5 mb-3">
-          ¿Tienes dudas o quieres más información sobre nuestros productos?
-        </p>
-        <p>
-          <i className="bi bi-envelope-fill text-warning me-2"></i>
-          <a
-            href="mailto:contacto@descansosdelrecuerdo.com"
-            className="text-decoration-none text-dark"
-          >
-            contacto@descansosdelrecuerdo.com
-          </a>
-        </p>
-        <p>
-          <i className="bi bi-telephone-fill text-warning me-2"></i>
-          +56 9 1234 5678
-        </p>
-        <p>
-          <i className="bi bi-geo-alt-fill text-warning me-2"></i>
-          Av. Siempre Viva 742, Maipú – Santiago, Chile
-        </p>
+      {/* Sección de contenido */}
+      <section className="container py-4">
+        <div className="row gy-4">
+          {/* QUIÉNES SOMOS */}
+          <div className="col-lg-6">
+            <div className="info-card">
+              <h3>Quiénes somos</h3>
+              <p>
+                Somos una empresa dedicada a la fabricación y distribución de
+                urnas funerarias con más de 35 años de trayectoria. Combinamos
+                tradición artesanal con innovación para ofrecer un producto
+                digno, resistente y lleno de significado.
+              </p>
+            </div>
+          </div>
+
+          {/* MISIÓN */}
+          <div className="col-lg-6">
+            <div className="info-card">
+              <h3>Nuestra Misión</h3>
+              <p>
+                Fusionamos la tradición artesanal e innovación, brindando
+                productos y servicios que ofrezcan respeto, amor y cuidado hacia
+                quienes ya no están.
+              </p>
+              <div className="icon">
+                <i className="bi bi-jar"></i>
+              </div>
+            </div>
+          </div>
+
+          {/* VALORES */}
+          <div className="col-lg-6">
+            <div className="info-card">
+              <h3>Nuestros Valores</h3>
+              <ul className="list-unstyled mb-0">
+                <li>
+                  <i className="bi bi-heart-fill me-2"></i> Respeto y empatía
+                </li>
+                <li>
+                  <i className="bi bi-brush me-2"></i> Artesanía y detalle
+                </li>
+                <li>
+                  <i className="bi bi-flower3 me-2"></i> Dignidad y armonía
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* SUSTENTABILIDAD */}
+          <div className="col-lg-6">
+            <div className="info-card">
+              <h3>Sustentabilidad</h3>
+              <p>
+                Nos comprometemos con el medio ambiente, utilizando materiales
+                naturales y procesos respetuosos con la naturaleza.
+              </p>
+              <div className="icon">
+                <i className="bi bi-leaf"></i>
+              </div>
+            </div>
+          </div>
+
+          {/* CONTACTO */}
+          <div className="col-12">
+            <div className="info-card text-center">
+              <h3>Contáctanos</h3>
+              <p>
+                ¿Tienes dudas o deseas más información?  
+                Escríbenos, estaremos encantados de ayudarte.
+              </p>
+              <p className="contact-info">
+                <i className="bi bi-envelope-fill me-2"></i>
+                contacto@descansosdelrecuerdo.com  
+                <br />
+                <i className="bi bi-telephone-fill me-2"></i> +56 9 1234 5676
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

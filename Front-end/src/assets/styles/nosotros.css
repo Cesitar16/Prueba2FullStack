@@ -1,0 +1,110 @@
+.nosotros-page {
+  background: url("/src/assets/img/FondoCatalogo.png") center/cover fixed no-repeat;
+  color: #f5f5f5;
+  min-height: 100vh;
+  backdrop-filter: blur(4px);
+}
+
+/* HERO principal */
+.nosotros-hero {
+  color: #fff;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.nosotros-title {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  color: #fdf2d1;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+}
+
+.nosotros-subtitle {
+  font-size: 1.15rem;
+  color: #fffdf8;
+  line-height: 1.6;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Imagen urna */
+.urna-nosotros {
+  max-width: 85%;
+  border-radius: 15px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Tarjetas informativas */
+.info-card {
+  background: rgba(58, 41, 25, 0.82); /* menos transparente y tono cálido */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  padding: 1.8rem;
+  color: #fff;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.35),
+    inset 0 0 10px rgba(255, 240, 200, 0.08);
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  background: rgba(70, 48, 25, 0.88);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.45),
+    inset 0 0 12px rgba(255, 240, 200, 0.15);
+}
+
+.info-card h3 {
+  color: #f8e3b0;
+  font-family: "Playfair Display", serif;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.info-card p,
+.info-card li {
+  color: #fefdfb;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.info-card ul li i {
+  color: #d4af37;
+}
+
+/* Íconos destacados */
+.info-card .icon {
+  font-size: 2rem;
+  color: #e5c45d;
+  margin-top: 1rem;
+}
+
+/* Contacto */
+.contact-info {
+  color: #f8eecf;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  line-height: 1.6;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Aumentar contraste general */
+.info-card,
+.nosotros-hero {
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 768px) {
+  .nosotros-title {
+    font-size: 2rem;
+  }
+  .info-card {
+    padding: 1.2rem;
+  }
+  .urna-nosotros {
+    max-width: 90%;
+  }
+}

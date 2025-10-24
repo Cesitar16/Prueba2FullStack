@@ -28,6 +28,9 @@ public class Urna {
     @Column(name = "descripcion_corta", columnDefinition = "TEXT")
     private String descripcionCorta;
 
+    @Column(name = "stock")
+    private Integer stock;
+
     @Column(name = "descripcion_detallada", columnDefinition = "TEXT")
     private String descripcionDetallada;
 
