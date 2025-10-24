@@ -27,4 +27,13 @@ public class CatalogoClientService {
                 .bodyToMono(UrnaDTO.class)
                 .onErrorResume(ex -> Mono.empty());
     }
+    
+    public Mono<UrnaDTO> crearUrna(UrnaDTO urna) {
+        return webClient.post()
+                .uri("/api/urnas")
+                .bodyValue(urna)
+                .retrieve()
+                .bodyToMono(UrnaDTO.class);
+    }
+
 }

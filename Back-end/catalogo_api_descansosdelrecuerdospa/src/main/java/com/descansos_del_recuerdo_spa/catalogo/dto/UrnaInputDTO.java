@@ -16,7 +16,6 @@ public class UrnaInputDTO {
     private String estado;
 
     private String idInterno; // 👈 NUEVO campo para código interno
-    private Integer stock;    // 👈 NUEVO campo para stock actual
 
     // Relaciones — permite recibir id y nombre desde el front
     private Long materialId;

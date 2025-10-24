@@ -173,19 +173,63 @@ export const catalogoApi = {
    ========================================= */
 export const inventarioApi = {
   getAll: () => api.get(`${BASE.INVENTARIO}/api/inventario`),
-  getByUrna: (urnaId) => api.get(`${BASE.INVENTARIO}/api/inventario/urna/${urnaId}`),
-  ajustarStock: (urnaId, cantidad, motivo, usuario = "Sistema") =>
-    api.patch(`${BASE.INVENTARIO}/api/inventario/ajustar/${urnaId}`, null, {
-      params: { nuevaCantidad: cantidad, motivo, usuario },
-    }),
-  disminuirStock: (urnaId, cantidad, motivo, usuario = "Sistema") =>
-    api.patch(`${BASE.INVENTARIO}/api/inventario/disminuir/${urnaId}`, null, {
-      params: { cantidad, motivo, usuario },
-    }),
-  aumentarStock: (urnaId, cantidad, motivo, usuario = "Sistema") =>
-    api.patch(`${BASE.INVENTARIO}/api/inventario/aumentar/${urnaId}`, null, {
-      params: { cantidad, motivo, usuario },
-    }),
+
+  getByUrna: (urnaId) =>
+    api.get(`${BASE.INVENTARIO}/api/inventario/urna/${urnaId}`),
+
+  // ✅ Ajusta o inicializa stock de una urna
+    ajustarStock: (urnaId, cantidad, motivo, usuario = "Sistema") => {
+    const encodedMotivo = motivo || "";
+    const encodedUsuario = usuario || "Sistema";
+  
+    const body = {
+      nuevaCantidad: cantidad,
+      motivo: encodedMotivo,
+      usuario: encodedUsuario,
+    };
+  
+    // 🔸 Enviar JSON en el cuerpo, no en params
+    return api.patch(`${BASE.INVENTARIO}/api/inventario/ajustar/${urnaId}`, body, {
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+  
+
+  // ✅ Disminuye stock existente
+  disminuirStock: (urnaId, cantidad, motivo, usuario = "Sistema") => {
+    const encodedMotivo = encodeURIComponent(motivo || "");
+    const encodedUsuario = encodeURIComponent(usuario || "Sistema");
+
+    return api.patch(
+      `${BASE.INVENTARIO}/api/inventario/disminuir/${urnaId}`,
+      null,
+      {
+        params: {
+          cantidad,
+          motivo: encodedMotivo,
+          usuario: encodedUsuario,
+        },
+      }
+    );
+  },
+
+  // ✅ Aumenta stock existente
+  aumentarStock: (urnaId, cantidad, motivo, usuario = "Sistema") => {
+    const encodedMotivo = encodeURIComponent(motivo || "");
+    const encodedUsuario = encodeURIComponent(usuario || "Sistema");
+
+    return api.patch(
+      `${BASE.INVENTARIO}/api/inventario/aumentar/${urnaId}`,
+      null,
+      {
+        params: {
+          cantidad,
+          motivo: encodedMotivo,
+          usuario: encodedUsuario,
+        },
+      }
+    );
+  },
 };
 
 /* =========================================
@@ -208,4 +252,60 @@ export const ubicacionApi = {
   getRegiones: () => api.get(`${BASE.UBICACION}/api/regiones`),
   getComunasByRegion: (regionId) =>
     api.get(`${BASE.UBICACION}/api/comunas/region/${regionId}`),
+};
+
+/* =========================================
+   🪶 CREAR URNA + INVENTARIO (flujo unificado)
+   ========================================= */
+export const crearUrnaConInventario = async (payload) => {
+  const { urna, inventario, imagenes } = payload;
+
+  try {
+    // 1️⃣ Crear la urna
+    const resUrna = await api.post(`${BASE.CATALOGO}/api/urnas`, urna);
+    const nuevaUrna = resUrna.data;
+
+    // 2️⃣ Subir imágenes
+    if (imagenes && imagenes.length > 0) {
+      for (const img of imagenes) {
+        const formData = new FormData();
+
+        // 🟢 Si tu objeto imagen contiene una propiedad `file` (File real)
+        if (img.file) {
+          formData.append("archivo", img.file);
+        } else if (img.contenido) {
+          // 🟠 Si accidentalmente está en base64, conviértelo a File
+          const byteString = atob(img.contenido.split(",")[1]);
+          const mimeString = img.contenido.split(",")[0].split(":")[1].split(";")[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: mimeString });
+          const file = new File([blob], img.nombre || "imagen.jpg", { type: mimeString });
+          formData.append("archivo", file);
+        }
+
+        formData.append("principal", img.principal);
+
+        await api.post(`${BASE.CATALOGO}/api/imagenes/${nuevaUrna.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
+    }
+
+
+    // 3️⃣ Crear inventario asociado
+    await api.post(`${BASE.INVENTARIO}/api/inventario`, {
+      urnaId: nuevaUrna.id,
+      ...inventario,
+      estado: inventario.cantidadActual > 0 ? "Disponible" : "Sin stock",
+    });
+
+    return nuevaUrna;
+  } catch (error) {
+    console.error("Error en crearUrnaConInventario:", error);
+    throw error;
+  }
 };
