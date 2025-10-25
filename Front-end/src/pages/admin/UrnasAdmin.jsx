@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { catalogoApi } from "../../services/api";
-import AdminModal from "../../components/admin/AdminModal";
+import AdminModalImagenes from "../../components/admin/AdminModalImagenes.jsx";
 import "../../assets/styles/admin.css";
 
 export default function UrnasAdmin() {
@@ -204,7 +203,7 @@ export default function UrnasAdmin() {
         </div>
 
         {/* === Modal de Crear/Editar Urna === */}
-        <AdminModal
+        <AdminModalImagenes
             open={modalOpen}
             onClose={() => setModalOpen(false)}
             onSuccess={fetchUrnas} // 🔁 Refresca la tabla tras crear o editar
