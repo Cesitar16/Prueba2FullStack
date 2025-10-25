@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, BASE } from "../../services/api";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
-import AdminModal from "../../components/admin/AdminModal";
+import AdminModal from "../../components/admin/AdminModal.jsx";
 
 export default function PedidosAdmin() {
     const [rows, setRows] = useState([]);

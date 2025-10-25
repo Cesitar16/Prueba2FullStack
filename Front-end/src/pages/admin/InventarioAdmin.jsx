@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, BASE } from "../../services/api";
-import AdminModal from "../../components/admin/AdminModal";
+import AdminModal from "../../components/admin/AdminModal.jsx";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 
 export default function InventarioAdmin() {
