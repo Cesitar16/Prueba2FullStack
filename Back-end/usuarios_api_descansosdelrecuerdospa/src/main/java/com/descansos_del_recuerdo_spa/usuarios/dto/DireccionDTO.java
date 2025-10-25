@@ -1,5 +1,6 @@
 package com.descansos_del_recuerdo_spa.usuarios.dto;
 
+import com.descansos_del_recuerdo_spa.usuarios.entities.Direccion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +22,16 @@ public class DireccionDTO {
     private String pais;
     private String telefono;
     private Long usuarioId;
-    private String usuarioNombre;
+
+    public static DireccionDTO from(Direccion d) {
+        DireccionDTO dto = new DireccionDTO();
+        dto.setId(d.getId());
+        dto.setUsuarioId(d.getUsuario().getId());
+        dto.setCalle(d.getCalle());
+        dto.setComuna(d.getComuna());
+        dto.setRegion(d.getRegion());
+        dto.setPais(d.getPais());
+        dto.setTelefono(d.getTelefono());
+        return dto;
+    }
 }

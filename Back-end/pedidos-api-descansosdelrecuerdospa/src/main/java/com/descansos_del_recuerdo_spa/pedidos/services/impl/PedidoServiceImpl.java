@@ -22,14 +22,14 @@ public class PedidoServiceImpl implements PedidoService {
     private final EstadoPedidoRepository estadoPedidoRepository;
     private final InventarioClientService inventarioClientService;
 
-    @Override
     @Transactional
+    @Override
     public PedidoResponseDTO crearPedido(PedidoRequestDTO request) {
-        // 1️⃣ Obtener estado inicial (Pendiente)
+        // 1) Estado inicial
         EstadoPedido estadoInicial = estadoPedidoRepository.findById(request.getEstadoPedidoId())
                 .orElseThrow(() -> new RuntimeException("Estado de pedido no encontrado"));
 
-        // 2️⃣ Crear pedido base
+        // 2) Crear pedido base
         Pedido pedido = Pedido.builder()
                 .usuarioId(request.getUsuarioId())
                 .direccionId(request.getDireccionId())
@@ -40,25 +40,25 @@ public class PedidoServiceImpl implements PedidoService {
 
         pedido = pedidoRepository.save(pedido);
 
+        // 3) Crear detalles (SIN setear subtotal) y acumular total
         BigDecimal total = BigDecimal.ZERO;
 
-        // 3️⃣ Procesar detalles
         for (DetallePedidoDTO d : request.getDetalles()) {
-            BigDecimal subtotal = d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad()));
+            // calcula línea local (para el total del pedido)
+            BigDecimal linea = d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad()));
+            total = total.add(linea);
 
             DetallePedido detalle = DetallePedido.builder()
                     .pedido(pedido)
                     .urnaId(d.getUrnaId())
                     .cantidad(d.getCantidad())
                     .precioUnitario(d.getPrecioUnitario())
-                    .subtotal(subtotal)
+                    // .subtotal(linea)  ❌ NO SETEES SUBTOTAL -> lo calcula MySQL
                     .build();
 
             detallePedidoRepository.save(detalle);
 
-            total = total.add(subtotal);
-
-            // 🔗 Reducir stock en inventario (API externa)
+            // (opcional) notificar inventario
             inventarioClientService.reducirStock(
                     d.getUrnaId(),
                     d.getCantidad(),
@@ -66,11 +66,11 @@ public class PedidoServiceImpl implements PedidoService {
             );
         }
 
-        // 4️⃣ Actualizar total
+        // 4) Actualizar total del pedido
         pedido.setTotal(total);
         pedidoRepository.save(pedido);
 
-        // 5️⃣ Devolver DTO
+        // 5) Devolver respuesta (tu mapToResponse ya lee det.getSubtotal() desde DB)
         return mapToResponse(pedido);
     }
 

@@ -29,6 +29,7 @@ public class DetallePedido {
     @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precioUnitario;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotal;
+    @org.hibernate.annotations.Generated(org.hibernate.annotations.GenerationTime.ALWAYS)
+    @Column(name = "subtotal", precision = 10, scale = 2, insertable = false, updatable = false)
+    private java.math.BigDecimal subtotal;
 }

@@ -1,5 +1,6 @@
 package com.descansos_del_recuerdo_spa.pedidos.controllers;
 
+import com.descansos_del_recuerdo_spa.pedidos.entities.dto.DetallePedidoDTO;
 import com.descansos_del_recuerdo_spa.pedidos.entities.dto.PedidoRequestDTO;
 import com.descansos_del_recuerdo_spa.pedidos.entities.dto.PedidoResponseDTO;
 import com.descansos_del_recuerdo_spa.pedidos.services.PedidoService;
