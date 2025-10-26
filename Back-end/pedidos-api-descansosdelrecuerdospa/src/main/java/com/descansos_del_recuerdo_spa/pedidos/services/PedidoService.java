@@ -5,11 +5,8 @@ import com.descansos_del_recuerdo_spa.pedidos.entities.dto.PedidoResponseDTO;
 import java.util.List;
 
 public interface PedidoService {
-
-    PedidoResponseDTO crearPedido(PedidoRequestDTO request);
-    List<PedidoResponseDTO> listarPedidos();
-    PedidoResponseDTO obtenerPedidoPorId(Integer id);
-    List<PedidoResponseDTO> listarPedidosPorUsuario(Integer usuarioId);
-    PedidoResponseDTO actualizarEstado(Integer idPedido, Integer estadoId);
-    void eliminarPedido(Integer id);
+    PedidoResponseDTO crearPedido(PedidoRequestDTO req);
+    void actualizarEstado(Long pedidoId, Long estadoId);
+    void eliminar(Long id);
+    List<PedidoResponseDTO> listar();
 }

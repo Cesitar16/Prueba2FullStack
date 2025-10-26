@@ -9,12 +9,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class PedidoRequestDTO {
-
-    private Integer usuarioId;
-    private Integer direccionId;
-    private Integer estadoPedidoId;
-    private List<DetallePedidoDTO> detalles;
-
-    // opcional: si lo calculas en backend, este campo puede omitirse
-    private BigDecimal total;
+    private Long usuarioId;
+    private Long direccionId;                  // puede ser null
+    private Long estadoPedidoId;               // 1 = Pendiente
+    private List<DetallePedidoDTO> detalles;   // sin subtotal
+    private BigDecimal total;                  // numérico
 }
