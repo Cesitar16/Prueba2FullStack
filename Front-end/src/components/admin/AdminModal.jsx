@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "/src/assets/styles/admin-modal.css";
 
 /**
@@ -60,22 +59,7 @@ export default function AdminModal({
                         {submitText}
                     </button>
                 </div>
-                ))}
             </div>
-            )}
-
-
-          </div>
-        </div>
-
-        {/* 🔹 Footer */}
-        <div className="p-3 border-top d-flex justify-content-end gap-2">
-          <button className="btn btn-cancelar" onClick={onClose}>
-            Cancelar
-          </button>
-          <button className="btn btn-guardar" onClick={onSubmit}>
-            {submitText}
-          </button>
         </div>
     );
 }
