@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface DetallePedidoService {
 
-    List<DetallePedidoDTO> listarDetallesPorPedido(Integer pedidoId);
+    List<DetallePedidoDTO> listarDetallesPorPedido(Long pedidoId);
 }

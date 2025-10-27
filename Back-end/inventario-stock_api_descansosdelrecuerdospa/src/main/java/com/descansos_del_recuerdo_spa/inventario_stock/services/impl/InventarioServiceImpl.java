@@ -147,4 +147,19 @@ public class InventarioServiceImpl implements InventarioService {
     public void delete(Long id) {
         inventarioRepository.deleteById(id);
     }
+
+    @Override
+    public void registrarMovimientoInicial(Inventario inventario, int cantidad, String motivo, String usuario) {
+        MovimientoStock movimiento = new MovimientoStock();
+        movimiento.setInventario(inventario);
+        movimiento.setCantidadAnterior(0); // primera vez, no había stock antes
+        movimiento.setCantidadNueva(cantidad);
+        movimiento.setMotivo(motivo);
+        movimiento.setTipoMovimiento("Inicial"); // coherente con tu estructura
+        movimiento.setUsuarioResponsable(usuario);
+        movimiento.setFechaMovimiento(LocalDateTime.now());
+        movimientoStockRepository.save(movimiento);
+    }
+
+
 }

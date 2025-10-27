@@ -3,6 +3,7 @@ package com.descansos_del_recuerdo_spa.pedidos.services.impl;
 import com.descansos_del_recuerdo_spa.pedidos.entities.EstadoPedido;
 import com.descansos_del_recuerdo_spa.pedidos.repositories.EstadoPedidoRepository;
 import com.descansos_del_recuerdo_spa.pedidos.services.EstadoPedidoService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,9 @@ public class EstadoPedidoServiceImpl implements EstadoPedidoService {
     }
 
     @Override
-    public EstadoPedido obtenerPorId(Integer id) {
+    public EstadoPedido obtenerPorId(Long id) {
         return estadoPedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Estado de pedido no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Estado de pedido no encontrado: " + id));
     }
 
     @Override

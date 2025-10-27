@@ -30,4 +30,7 @@ public interface InventarioService {
     Inventario aumentarStock(Long urnaId, int cantidad, String motivo, String usuario);
 
     void delete(Long id);
+
+    void registrarMovimientoInicial(Inventario inventario, int cantidad, String motivo, String usuario);
+
 }

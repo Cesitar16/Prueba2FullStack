@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,25 +17,25 @@ public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
+    // referenciados por ID porque vienen de otros microservicios
     @Column(name = "usuario_id", nullable = false)
-    private Integer usuarioId;
+    private Long usuarioId;
 
     @Column(name = "direccion_id")
-    private Integer direccionId;
+    private Long direccionId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "estado_pedido_id")
+    private EstadoPedido estadoPedido;
 
     @Column(name = "fecha_pedido", nullable = false)
-    private LocalDateTime fechaPedido = LocalDateTime.now();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estado_pedido_id", nullable = false)
-    private EstadoPedido estadoPedido;
+    private LocalDateTime fechaPedido;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
-    // Relación bidireccional
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetallePedido> detalles;
+    private List<DetallePedido> detalles = new ArrayList<>();
 }

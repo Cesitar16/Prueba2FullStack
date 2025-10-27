@@ -10,12 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PedidoResponseDTO {
-
-    private Integer id;
-    private Integer usuarioId;
-    private Integer direccionId;
+    private Long id;
+    private Long usuarioId;
+    private Long direccionId;
     private LocalDateTime fechaPedido;
-    private String estado;
+    private String estado;                     // nombre del estado
     private BigDecimal total;
     private List<DetallePedidoDTO> detalles;
 }

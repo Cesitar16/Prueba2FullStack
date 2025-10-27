@@ -13,11 +13,11 @@ public class EstadoPedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 60)
     private String nombre;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 255)
     private String descripcion;
 }
