@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DetallePedidoRepository extends JpaRepository<DetallePedido, Integer> {
+public interface DetallePedidoRepository extends JpaRepository<DetallePedido, Long> {
 
     // 🔹 Buscar detalles por pedido
-    List<DetallePedido> findByPedido_Id(Integer pedidoId);
+    List<DetallePedido> findByPedido_Id(Long pedidoId);
 
     // 🔹 Buscar detalles por urna
-    List<DetallePedido> findByUrnaId(Integer urnaId);
+    List<DetallePedido> findByUrnaId(Long urnaId);
 }

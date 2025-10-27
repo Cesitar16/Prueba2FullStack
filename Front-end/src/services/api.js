@@ -91,8 +91,11 @@ export const usuariosApi = {
   login: (credenciales) => api.post(`${BASE.USUARIOS}/api/auth/login`, credenciales),
   getProfile: () => api.get(`${BASE.USUARIOS}/api/auth/me`),
   getDireccionesByUsuario: (usuarioId) =>
-    api.get(`http://localhost:${PORTS.USUARIOS}/api/direcciones/usuario/${usuarioId}`),
-
+      api.get(`${BASE.USUARIOS}/api/direcciones/usuario/${encodeURIComponent(usuarioId)}`),
+  createDireccion: (data) =>
+        api.post(`${BASE.USUARIOS}/api/direcciones`, data),
+  updateDireccion: (id, data) =>
+        api.put(`${BASE.USUARIOS}/api/direcciones/${id}`, data),
 };
 
 /* =========================================

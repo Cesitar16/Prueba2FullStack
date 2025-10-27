@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DetallePedidoServiceImpl implements DetallePedidoService {
 
-    private final DetallePedidoRepository detallePedidoRepository;
+    private final DetallePedidoRepository repository;
 
     @Override
-    public List<DetallePedidoDTO> listarDetallesPorPedido(Integer pedidoId) {
-        return detallePedidoRepository.findByPedido_Id(pedidoId)
-                .stream()
-                .map(det -> DetallePedidoDTO.builder()
-                        .urnaId(det.getUrnaId())
-                        .cantidad(det.getCantidad())
-                        .precioUnitario(det.getPrecioUnitario())
-                        .subtotal(det.getSubtotal())
+    public List<DetallePedidoDTO> listarDetallesPorPedido(Long pedidoId) {
+        return repository.findByPedido_Id(pedidoId).stream()
+                .map(dp -> DetallePedidoDTO.builder()
+                        .id(dp.getId())
+                        .urnaId(dp.getUrnaId())
+                        .cantidad(dp.getCantidad())
+                        .precioUnitario(dp.getPrecioUnitario())
+                        .subtotal(dp.getSubtotal())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 }

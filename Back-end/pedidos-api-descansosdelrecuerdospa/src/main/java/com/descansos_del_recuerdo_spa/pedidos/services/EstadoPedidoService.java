@@ -6,6 +6,6 @@ import java.util.List;
 public interface EstadoPedidoService {
 
     List<EstadoPedido> listarEstados();
-    EstadoPedido obtenerPorId(Integer id);
+    EstadoPedido obtenerPorId(Long id);
     EstadoPedido obtenerPorNombre(String nombre);
 }

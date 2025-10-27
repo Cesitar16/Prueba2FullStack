@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class DetallePedidoDTO {
-
-    private Integer urnaId;
+    private Long id;                 // solo en respuesta
+    private Long urnaId;
     private Integer cantidad;
     private BigDecimal precioUnitario;
-    private BigDecimal subtotal;
+    private BigDecimal subtotal;     // solo en respuesta (lo calcula la BD)
 }

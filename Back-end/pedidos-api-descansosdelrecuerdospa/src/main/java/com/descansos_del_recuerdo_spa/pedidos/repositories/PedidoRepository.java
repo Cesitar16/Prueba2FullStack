@@ -6,13 +6,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
+public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     // 🔹 Buscar pedidos por usuario
-    List<Pedido> findByUsuarioId(Integer usuarioId);
+    List<Pedido> findByUsuarioId(Long usuarioId);
 
     // 🔹 Buscar pedidos por estado
-    List<Pedido> findByEstadoPedido_Id(Integer estadoPedidoId);
+    List<Pedido> findByEstadoPedido_Id(Long estadoPedidoId);
 
     // 🔹 Buscar pedidos por rango de fechas (si se requiere más adelante)
     // List<Pedido> findByFechaPedidoBetween(LocalDateTime inicio, LocalDateTime fin);
