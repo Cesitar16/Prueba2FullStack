@@ -16,11 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -32,11 +27,19 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(
+                                "/swagger-ui/**", "/swagger-ui.html",
+                                "/v3/api-docs", "/v3/api-docs/**",
+                                "/api-docs", "/api-docs/**",
+                                "/swagger-resources/**", "/webjars/**",
+                                "/api/auth/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
                 .authenticationProvider(authProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
