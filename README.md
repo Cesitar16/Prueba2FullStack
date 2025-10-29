@@ -28,7 +28,7 @@ El proyecto se enfoca en ofrecer una **experiencia de usuario profesional y resp
 
 | 🏛️ Catálogo de Urnas                                          | 🔐 Panel de Administración                                       |
 | :-----------------------------------------------------------: | :-----------------------------------------------------------: |
-|  |  |
+|![Vista del Catálogo de Urnas](https://github.com/user-attachments/assets/cd279238-6150-4be6-92b0-ea0120a79c90)|![Vista del Panel de Administración](https://github.com/user-attachments/assets/fca7cfe7-07fc-4098-bc3f-cb2f247471cc)
 
 ---
 
