@@ -532,6 +532,97 @@ section img {
 }
 
 /* ===========================================
+   📄 PAGINACIÓN – CATÁLOGO (Estilo Armonizado)
+   =========================================== */
+
+/* Contenedor de la paginación */
+.paginacion-catalogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    /* Estética de Catálogo */
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background: rgba(249, 247, 243, 0.6);
+    backdrop-filter: blur(1px);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--sombra-suave);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;
+}
+
+/* Estilo general de los botones de paginación */
+.paginacion-catalogo .btn {
+    min-width: 45px;
+    font-weight: 600; /* Más grueso, como los botones de filtro */
+    border-radius: 10px; /* Como los inputs de filtro */
+    transition: var(--transicion-base);
+    padding: 0.5rem 0.9rem;
+    box-shadow: var(--sombra-suave);
+    border: 1.5px solid transparent;
+    line-height: 1.5;
+}
+
+/* Botón de página ACTUAL (Activo) */
+/* (Imita el estilo .btn-filtrar) */
+.paginacion-catalogo .btn-primary {
+    background: linear-gradient(180deg, #6e4a28 0%, #4b2e17 100%);
+    border-color: rgba(50, 30, 15, 0.4);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+.paginacion-catalogo .btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+/* Botones de OTRAS páginas (Inactivos) */
+/* (Imita el estilo .btn-limpiar) */
+.paginacion-catalogo .btn-outline-primary {
+    background: linear-gradient(180deg, #fffaf3 0%, #f1e0c8 100%);
+    border: 1.5px solid rgba(80, 50, 25, 0.35);
+    color: #3b2b1a;
+}
+
+.paginacion-catalogo .btn-outline-primary:hover {
+    background: linear-gradient(180deg, #f9edd7 0%, #f0dcc0 100%);
+    border-color: rgba(90, 60, 30, 0.4);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+/* Botones 'Anterior/Siguiente' */
+/* (Mismo estilo que los inactivos) */
+.paginacion-catalogo .btn-outline-secondary {
+    background: linear-gradient(180deg, #fffaf3 0%, #f1e0c8 100%);
+    border: 1.5px solid rgba(80, 50, 25, 0.35);
+    color: #3b2b1a;
+    font-weight: 500; /* Un poco menos de énfasis */
+}
+
+.paginacion-catalogo .btn-outline-secondary:hover {
+    background: linear-gradient(180deg, #f9edd7 0%, #f0dcc0 100%);
+    border-color: rgba(90, 60, 30, 0.4);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+/* Botones deshabilitados */
+.paginacion-catalogo .btn:disabled {
+    background: #e9ecef;
+    border-color: #dee2e6;
+    color: #6c757d;
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ===========================================
    📞 FOOTER
    =========================================== */
 footer {
