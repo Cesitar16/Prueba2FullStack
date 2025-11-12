@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { UserTable } from "../components/UserTable";
-import { UserForm } from "../components/UserForm";
+import { UserTable } from "../components/admin/usuarios/UserTable";
+import { UserForm } from "../components/admin/usuarios/UserForm";
 import "../assets/styles/vistaAdmin.css";
 
 /**

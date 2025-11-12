@@ -1,13 +1,13 @@
 import {useContext, useEffect, useRef, useState} from "react";
-import { CarritoContext } from "../context/CarritoContext";
-import { AuthContext } from "../context/AuthContext";
-import placeholder from "../assets/img/placeholder.png";
+import { CarritoContext } from "../../context/CarritoContext";
+import { AuthContext } from "../../context/AuthContext";
+import placeholder from "../../assets/img/placeholder.png";
 import {
     usuariosApi,
     pedidosApi,
     inventarioApi,
-} from "../services/api";
-import "../assets/styles/estilos.css";
+} from "../../services/api";
+import "../../assets/styles/estilos.css";
 
 const ESTADO_PENDIENTE_ID = 1; // Ajusta si tu backend usa otro id
 

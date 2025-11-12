@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { catalogoApi } from "../../services/api";
-import AdminModalImagenes from "../../components/admin/AdminModalImagenes.jsx";
+import AdminModalImagenes from "../../components/admin/common/AdminModalImagenes.jsx";
 import "../../assets/styles/admin.css";
 
 export default function UrnasAdmin() {

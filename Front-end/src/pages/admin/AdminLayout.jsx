@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { SidebarAdmin } from "../../components/admin/SideBarAdmin";
-import { HeaderAdmin } from "../../components/admin/HeaderAdmin";
+import { SidebarAdmin } from "../../components/admin/layout/SideBarAdmin";
+import { HeaderAdmin } from "../../components/admin/layout/HeaderAdmin";
 import "../../assets/styles/vistaAdmin.css";
 
 export default function AdminLayout() {

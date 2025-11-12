@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import "../../assets/styles/animate.css";
+import { AuthContext } from "../../../context/AuthContext";
+import "../../../assets/styles/animate.css";
 
 /**
  * LoginStep.jsx

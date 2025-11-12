@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "/src/assets/styles/admin-modal.css";
-import { catalogoApi, inventarioApi, crearUrnaConInventario } from "../../services/api";
+import { catalogoApi, inventarioApi, crearUrnaConInventario } from "../../../services/api";
 
 /**
  * AdminModalImagenes.jsx

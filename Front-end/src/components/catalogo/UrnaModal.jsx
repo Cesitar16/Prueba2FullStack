@@ -1,7 +1,7 @@
 import { useState, useContext, useMemo } from "react";
-import { CarritoContext } from "../context/CarritoContext";
-import placeholder from "../assets/img/placeholder.png";
-import "../assets/styles/estilos.css";
+import { CarritoContext } from "../../context/CarritoContext";
+import placeholder from "../../assets/img/placeholder.png";
+import "../../assets/styles/estilos.css";
 
 const buildImgUrl = (u) => {
   if (!u) return null;
