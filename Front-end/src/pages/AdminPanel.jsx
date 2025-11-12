@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { DashboardStats } from "../components/DashboardStats";
-import { ProductTable } from "../components/ProductTable";
-import { UserTable } from "../components/UserTable";
+import { DashboardStats } from "../components/admin/dashboard/DashboardStats";
+import { ProductTable } from "../components/admin/urnas/ProductTable";
+import { UserTable } from "../components/admin/usuarios/UserTable";
 import "../assets/styles/vistaAdmin.css";
 
 /**

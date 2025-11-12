@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, BASE } from "../../services/api";
-import AdminModal from "../../components/admin/AdminModal.jsx";
-import ConfirmDialog from "../../components/admin/ConfirmDialog";
+import AdminModal from "../../components/admin/common/AdminModal.jsx";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
 
 export default function InventarioAdmin() {
     const [rows, setRows] = useState([]);

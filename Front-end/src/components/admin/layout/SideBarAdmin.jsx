@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { FaUsers, FaBoxOpen, FaClipboardList, FaWarehouse, FaChartPie } from "react-icons/fa";
-import "../../assets/styles/vistaAdmin.css";
-import "../../assets/styles/admin.css";
+import "../../../assets/styles/vistaAdmin.css";
+import "../../../assets/styles/admin.css";
 
 export function SidebarAdmin() {
     return (

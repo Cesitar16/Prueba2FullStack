@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { UrnaCard } from "../components/UrnaCard";
-import { UrnaModal } from "../components/UrnaModal";
-import { CarritoModal } from "../components/CarritoModal";
-import { FloatingCartButton } from "../components/FloatingCartButton";
+import { UrnaCard } from "../components/catalogo/UrnaCard";
+import { UrnaModal } from "../components/catalogo/UrnaModal";
+import { CarritoModal } from "../components/carrito/CarritoModal";
+import { FloatingCartButton } from "../components/carrito/FloatingCartButton";
 import { catalogoApi, inventarioApi } from "../services/api"; // ⬅️ usamos ambos
 import "../assets/styles/estilos.css";
 

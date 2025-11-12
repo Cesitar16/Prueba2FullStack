@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
+import { Navbar } from "./components/layout/Navbar";
+import { Footer } from "./components/layout/Footer";
 import { Catalogo } from "./pages/Catalogo";
 import { Nosotros } from "./pages/Nosotros";
 import { Login } from "./pages/Login";
 import { NotFound } from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import "./assets/styles/estilos.css";
 import "./assets/styles/variables.css";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
