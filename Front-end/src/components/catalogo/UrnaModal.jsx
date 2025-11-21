@@ -1,259 +1,167 @@
-import { useState, useContext, useMemo } from "react";
+import {useState, useContext, useMemo, useEffect} from "react";
+import { Modal, Button, Row, Col, Form, Image, InputGroup } from "react-bootstrap";
 import { CarritoContext } from "../../context/CarritoContext";
 import placeholder from "../../assets/img/placeholder.png";
 import "../../assets/styles/estilos.css";
 
 const buildImgUrl = (u) => {
-  if (!u) return null;
-  return /^https?:\/\//i.test(u) ? u : `http://localhost:8002${u}`;
+    if (!u) return null;
+    return /^https?:\/\//i.test(u) ? u : `http://localhost:8002${u}`;
 };
 
-export function UrnaModal({ urnaSeleccionada }) {
-  const { agregarAlCarrito } = useContext(CarritoContext);
-  const [cantidad, setCantidad] = useState(1);
-  const [indexActivo, setIndexActivo] = useState(0);
+export function UrnaModal({ urnaSeleccionada, show, onHide }) {
+    const { agregarAlCarrito } = useContext(CarritoContext);
+    const [cantidad, setCantidad] = useState(1);
+    const [indexActivo, setIndexActivo] = useState(0);
 
-  // 🔹 Construir array de imágenes (principal + adicionales)
-  const imagenes = useMemo(() => {
-    if (!urnaSeleccionada) return [placeholder];
+    useEffect(() => {
+        if (show) {
+            setCantidad(1);
+            setIndexActivo(0);
+        }
+    }, [show, urnaSeleccionada]);
 
-    const principal = buildImgUrl(urnaSeleccionada.imagenPrincipal);
-    const extras =
-      urnaSeleccionada.imagenes?.map((img) => buildImgUrl(img?.url)) || [];
+    const imagenes = useMemo(() => {
+        if (!urnaSeleccionada) return [placeholder];
+        const principal = buildImgUrl(urnaSeleccionada.imagenPrincipal);
+        const extras = urnaSeleccionada.imagenes?.map((img) => buildImgUrl(img?.url)) || [];
+        const lista = [principal, ...extras].filter(Boolean);
+        return Array.from(new Set(lista)).length > 0 ? Array.from(new Set(lista)) : [placeholder];
+    }, [urnaSeleccionada]);
 
-    const lista = [principal, ...extras].filter(Boolean);
-    const unicos = Array.from(new Set(lista));
-    return unicos.length > 0 ? unicos : [placeholder];
-  }, [urnaSeleccionada]);
+    const handleAgregar = () => {
+        if (!urnaSeleccionada) return;
+        if (cantidad < 1 || cantidad > urnaSeleccionada.stock) return alert("Cantidad no válida.");
 
-  // 🔹 Manejador para fallback de imagen
-  const toPlaceholder = (e) => {
-    if (e?.target?.src && !e.target.src.includes("placeholder")) {
-      e.target.src = placeholder;
-    }
-  };
+        agregarAlCarrito({
+            id: urnaSeleccionada.id,
+            nombre: urnaSeleccionada.nombre,
+            precio: urnaSeleccionada.precio,
+            cantidad,
+            img: buildImgUrl(urnaSeleccionada.imagenPrincipal) || placeholder,
+        });
+        onHide();
+    };
 
-  // 🔹 Navegación de galería
-  const siguienteImagen = () =>
-    setIndexActivo((prev) => (prev + 1) % imagenes.length);
+    if (!urnaSeleccionada) return null;
 
-  const anteriorImagen = () =>
-    setIndexActivo((prev) =>
-      prev === 0 ? imagenes.length - 1 : prev - 1
-    );
-
-  // 🔹 Agregar al carrito
-  const handleAgregar = () => {
-    if (!urnaSeleccionada) return;
-    if (cantidad < 1) return alert("Debe agregar al menos 1 unidad.");
-    if (cantidad > urnaSeleccionada.stock)
-      return alert("No hay suficiente stock disponible.");
-
-    agregarAlCarrito({
-      id: urnaSeleccionada.id,
-      nombre: urnaSeleccionada.nombre,
-      precio: urnaSeleccionada.precio,
-      cantidad,
-      img: buildImgUrl(urnaSeleccionada.imagenPrincipal) || placeholder,
-    });
-
-    alert(`Se agregó ${cantidad} unidad(es) de "${urnaSeleccionada.nombre}"`);
-  };
-
-  return (
-    <div
-      className="modal fade"
-      id="urnaModal"
-      tabIndex="-1"
-      aria-labelledby="urnaModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content">
-          {/* 🔸 Si no hay urna seleccionada, mostrar carga */}
-          {!urnaSeleccionada ? (
-            <div className="modal-body text-center py-5 text-muted">
-              <div className="spinner-border text-secondary mb-3" role="status"></div>
-              <p>Cargando detalles...</p>
-            </div>
-          ) : (
-            <>
-              {/* CABECERA */}
-              <div className="modal-header bg-dark text-white">
+    return (
+        <Modal
+            show={show}
+            onHide={onHide}
+            centered
+            // Usamos nuestra clase CSS personalizada para controlar el ancho exacto
+            dialogClassName="modal-custom-width"
+            contentClassName="border-0 shadow-lg"
+        >
+            <Modal.Header closeButton className="modal-header-brand py-3">
                 <div>
-                  <h5 className="modal-title" id="urnaModalLabel">
-                    {urnaSeleccionada.nombre}
-                  </h5>
-                  <small className="text-warning">
-                    Código: {urnaSeleccionada.idInterno || `#${urnaSeleccionada.id}`}
-                  </small>
+                    <Modal.Title as="h5" className="fw-bold" style={{ fontFamily: 'Playfair Display, serif' }}>
+                        {urnaSeleccionada.nombre}
+                    </Modal.Title>
+                    <small className="text-white-50 d-block" style={{ fontSize: '0.85rem' }}>
+                        REF: {urnaSeleccionada.idInterno || `#${urnaSeleccionada.id}`}
+                    </small>
                 </div>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white"
-                  data-bs-dismiss="modal"
-                  aria-label="Cerrar"
-                ></button>
-              </div>
+            </Modal.Header>
 
-              {/* CONTENIDO PRINCIPAL */}
-              <div className="modal-body">
-                <div className="row">
-                  {/* MINIATURAS */}
-                  <div className="col-2 d-flex flex-column align-items-center">
-                    <button
-                      className="btn btn-sm btn-light mb-2"
-                      onClick={() =>
-                        document.getElementById("thumbsContainer").scrollBy({
-                          top: -80,
-                          behavior: "smooth",
-                        })
-                      }
-                    >
-                      ▲
-                    </button>
+            <Modal.Body className="p-4">
+                <Row className="g-4">
+                    {/* COLUMNA IZQUIERDA: Galería + Imagen Principal */}
+                    <Col lg={7}>
+                        <Row>
+                            {/* Miniaturas (Vertical a la izquierda) */}
+                            <Col xs={3} sm={2} className="d-flex flex-column gap-2 pe-0" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                                {imagenes.map((img, i) => (
+                                    <Image
+                                        key={i}
+                                        src={img || placeholder}
+                                        thumbnail
+                                        className={`thumb-img p-1 ${i === indexActivo ? "active border-warning" : ""}`}
+                                        style={{ cursor: 'pointer', aspectRatio: '1/1', objectFit: 'cover' }}
+                                        onClick={() => setIndexActivo(i)}
+                                        onError={(e) => (e.target.src = placeholder)}
+                                    />
+                                ))}
+                            </Col>
 
-                    <div
-                      id="thumbsContainer"
-                      style={{ maxHeight: "300px", overflowY: "auto" }}
-                      className="d-flex flex-column gap-2"
-                    >
-                      {imagenes.map((img, i) => (
-                        <img
-                          key={i}
-                          src={img || placeholder}
-                          alt={`thumb-${i}`}
-                          className={`img-thumbnail ${
-                            i === indexActivo ? "border-primary" : ""
-                          }`}
-                          style={{
-                            width: "70px",
-                            height: "70px",
-                            objectFit: "cover",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => setIndexActivo(i)}
-                          onError={toPlaceholder}
-                        />
-                      ))}
-                    </div>
+                            {/* Imagen Grande */}
+                            <Col xs={9} sm={10}>
+                                <div className="rounded overflow-hidden border bg-light d-flex align-items-center justify-content-center" style={{ height: '100%', minHeight: '350px' }}>
+                                    <Image
+                                        src={imagenes[indexActivo] || placeholder}
+                                        alt={urnaSeleccionada.nombre}
+                                        fluid
+                                        className="modal-product-img" // Clase CSS nueva para controlar altura
+                                        onError={(e) => (e.target.src = placeholder)}
+                                    />
+                                </div>
+                            </Col>
+                        </Row>
+                    </Col>
 
-                    <button
-                      className="btn btn-sm btn-light mt-2"
-                      onClick={() =>
-                        document.getElementById("thumbsContainer").scrollBy({
-                          top: 80,
-                          behavior: "smooth",
-                        })
-                      }
-                    >
-                      ▼
-                    </button>
-                  </div>
+                    {/* COLUMNA DERECHA: Detalles */}
+                    <Col lg={5} className="d-flex flex-column">
+                        <div className="mb-3">
+                            <h2 className="fw-bold mb-2" style={{ color: 'var(--color-principal)' }}>
+                                ${Number(urnaSeleccionada.precio).toLocaleString("es-CL")}
+                            </h2>
+                            <p className="text-muted mb-0" style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>
+                                {urnaSeleccionada.descripcionDetallada || urnaSeleccionada.descripcionCorta || "Producto de alta calidad."}
+                            </p>
+                        </div>
 
-                  {/* IMAGEN PRINCIPAL */}
-                  <div className="col-6 position-relative text-center">
-                    <img
-                      src={imagenes[indexActivo] || placeholder}
-                      alt={urnaSeleccionada.nombre}
-                      className="img-fluid rounded"
-                      style={{ maxHeight: "400px", objectFit: "contain" }}
-                      onError={toPlaceholder}
-                    />
+                        {/* Tabla de especificaciones compacta */}
+                        <div className="bg-light p-3 rounded mb-4 border">
+                            <Row className="g-2 text-dark" style={{ fontSize: '0.9rem' }}>
+                                <Col xs={6}><span className="text-muted">Material:</span> <span className="fw-semibold">{urnaSeleccionada.material?.nombre}</span></Col>
+                                <Col xs={6}><span className="text-muted">Color:</span> <span className="fw-semibold">{urnaSeleccionada.color?.nombre}</span></Col>
+                                <Col xs={6}><span className="text-muted">Modelo:</span> <span className="fw-semibold">{urnaSeleccionada.modelo?.nombre}</span></Col>
+                                <Col xs={6}><span className="text-muted">Peso:</span> <span className="fw-semibold">{urnaSeleccionada.peso} kg</span></Col>
+                                <Col xs={12} className="border-top mt-2 pt-2">
+                                    <span className="text-muted">Dimensiones:</span> <span className="fw-semibold">{`${urnaSeleccionada.ancho} x ${urnaSeleccionada.profundidad} x ${urnaSeleccionada.alto} cm`}</span>
+                                </Col>
+                            </Row>
+                        </div>
 
-                    {imagenes.length > 1 && (
-                      <>
-                        <button
-                          className="btn btn-dark position-absolute top-50 start-0 translate-middle-y"
-                          style={{ opacity: 0.6 }}
-                          onClick={anteriorImagen}
-                        >
-                          ‹
-                        </button>
-                        <button
-                          className="btn btn-dark position-absolute top-50 end-0 translate-middle-y"
-                          style={{ opacity: 0.6 }}
-                          onClick={siguienteImagen}
-                        >
-                          ›
-                        </button>
-                      </>
-                    )}
-                  </div>
+                        {/* Controles de compra al fondo */}
+                        <div className="mt-auto">
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                                <label className="fw-bold text-secondary" style={{ fontSize: '0.9rem' }}>Cantidad</label>
+                                <small className={urnaSeleccionada.stock < 5 ? "text-danger fw-bold" : "text-success fw-bold"}>
+                                    {urnaSeleccionada.stock > 0 ? `Disponible: ${urnaSeleccionada.stock}` : "Sin Stock"}
+                                </small>
+                            </div>
 
-                  {/* DETALLES */}
-                  <div className="col-4">
-                    <p className="mb-2">
-                      <strong>Código:</strong>{" "}
-                      {urnaSeleccionada.idInterno || `#${urnaSeleccionada.id}`}
-                    </p>
-                    <p>
-                      <strong>Descripción:</strong>{" "}
-                      {urnaSeleccionada.descripcionDetallada ||
-                        "Urna de alta calidad con acabado artesanal."}
-                    </p>
-                    <p>
-                      <strong>Modelo:</strong> {urnaSeleccionada.modelo?.nombre}
-                    </p>
-                    <p>
-                      <strong>Material:</strong>{" "}
-                      {urnaSeleccionada.material?.nombre}
-                    </p>
-                    <p>
-                      <strong>Color:</strong> {urnaSeleccionada.color?.nombre}
-                    </p>
-                    <p>
-                      <strong>Dimensiones:</strong>{" "}
-                      {`${urnaSeleccionada.ancho}×${urnaSeleccionada.profundidad}×${urnaSeleccionada.alto} cm`}
-                    </p>
-                    <p>
-                      <strong>Peso:</strong> {urnaSeleccionada.peso} kg
-                    </p>
-                    <p>
-                      <strong>Precio:</strong>{" "}
-                      ${urnaSeleccionada.precio?.toLocaleString("es-CL")}
-                    </p>
-                    <p>
-                      <strong>Stock:</strong> {urnaSeleccionada.stock} unidades
-                    </p>
+                            <InputGroup className="mb-3">
+                                <Button variant="outline-secondary" onClick={() => setCantidad(Math.max(1, cantidad - 1))}>-</Button>
+                                <Form.Control
+                                    className="text-center border-secondary"
+                                    type="number"
+                                    min="1"
+                                    max={urnaSeleccionada.stock}
+                                    value={cantidad}
+                                    onChange={(e) => setCantidad(Number(e.target.value))}
+                                />
+                                <Button variant="outline-secondary" onClick={() => setCantidad(Math.min(urnaSeleccionada.stock, cantidad + 1))}>+</Button>
+                            </InputGroup>
 
-                    {/* CANTIDAD */}
-                    <div className="input-group mb-3">
-                      <span className="input-group-text">Cantidad</span>
-                      <input
-                        type="number"
-                        className="form-control"
-                        min="1"
-                        max={urnaSeleccionada.stock}
-                        value={cantidad}
-                        onChange={(e) => setCantidad(Number(e.target.value))}
-                      />
-                    </div>
-
-                    <button
-                      className="btn btn-primary w-100"
-                      onClick={handleAgregar}
-                    >
-                      <i className="bi bi-cart-plus me-2"></i> Agregar al carrito
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* PIE */}
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+                            <Button
+                                variant=""
+                                className="w-100 btn-brand py-2 fw-bold shadow-sm"
+                                onClick={handleAgregar}
+                                disabled={urnaSeleccionada.stock === 0}
+                            >
+                                {urnaSeleccionada.stock === 0 ? "Agotado" : (
+                                    <>
+                                        <i className="bi bi-cart-plus-fill me-2"></i> Agregar al Carrito
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </Col>
+                </Row>
+            </Modal.Body>
+        </Modal>
+    );
 }

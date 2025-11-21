@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Container, Row, Col, Spinner, Button } from "react-bootstrap";
 import { UrnaCard } from "../components/catalogo/UrnaCard";
 import { UrnaModal } from "../components/catalogo/UrnaModal";
 import { CarritoModal } from "../components/carrito/CarritoModal";
@@ -7,32 +8,29 @@ import { catalogoApi, inventarioApi } from "../services/api"; // ⬅️ usamos a
 import "../assets/styles/estilos.css";
 
 export function Catalogo() {
-    const [urnas, setUrnas] = useState([]); // Todas las urnas (filtradas)
+    const [urnas, setUrnas] = useState([]);
     const [urnaSeleccionada, setUrnaSeleccionada] = useState(null);
+    const [showCarrito, setShowCarrito] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // 🔎 filtros
+    // 🔎 Filtros
     const [busquedaNombre, setBusquedaNombre] = useState("");
     const [codigo, setCodigo] = useState("");
     const [materialId, setMaterialId] = useState("");
     const [precioMin, setPrecioMin] = useState("");
     const [precioMax, setPrecioMax] = useState("");
 
-    // combos
+    // Combos
     const [materiales, setMateriales] = useState([]);
 
-    // 📄 PAGINACIÓN
+    // 📄 Paginación
     const [paginaActual, setPaginaActual] = useState(1);
-    const urnasPorPagina = 12; // Mostramos 12 productos por página
+    const urnasPorPagina = 12;
 
-    // --- helpers ---
-
-    // Construye un mapa urnaId -> stock total
+    // --- Helpers ---
     const buildStockMap = (items = []) => {
         return items.reduce((acc, it) => {
-            // Si tu API maneja estado, cuenta sólo los "Disponibles"
             if (it?.estado && it.estado !== "Disponible") return acc;
-
             const uid = it.urnaId;
             const cant = Number(it.cantidadActual || 0);
             acc[uid] = (acc[uid] || 0) + cant;
@@ -40,45 +38,36 @@ export function Catalogo() {
         }, {});
     };
 
-    // Une urnas + stock
     const mergeUrnasConStock = (urnas = [], inventario = []) => {
         const stockPorUrna = buildStockMap(inventario);
         return urnas.map((u) => ({ ...u, stock: stockPorUrna[u.id] ?? 0 }));
     };
 
-    // Llamada unificada (con o sin filtros)
     const fetchUrnasConStock = async (filters = {}) => {
         setLoading(true);
-        setPaginaActual(1); // 👈 Importante: Resetear a página 1 en cada filtro
+        setPaginaActual(1);
         try {
-            // urnas (con filtros) + inventario
             const [uRes, invRes] = await Promise.all([
                 catalogoApi.getUrnasFiltered(filters),
                 inventarioApi.getAll(),
             ]);
             const urnasBase = uRes.data || [];
             const inventario = invRes.data || [];
-
             const conStock = mergeUrnasConStock(urnasBase, inventario);
             setUrnas(conStock);
         } catch (err) {
-            console.error("Error obteniendo catálogo/inventario:", err);
-            alert("No se pudo cargar el catálogo. Intenta nuevamente.");
+            console.error("Error obteniendo catálogo:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    // Carga inicial
     useEffect(() => {
         (async () => {
             try {
                 const m = await catalogoApi.getMateriales();
                 setMateriales(m.data || []);
-            } catch (err) {
-                console.error("Error cargando materiales:", err);
-            }
-            // urnas + stock
+            } catch (err) { console.error(err); }
             await fetchUrnasConStock({});
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,185 +96,131 @@ export function Catalogo() {
     // --- Lógica de Paginación ---
     const indiceUltimaUrna = paginaActual * urnasPorPagina;
     const indicePrimeraUrna = indiceUltimaUrna - urnasPorPagina;
-    // slice(inicio, fin) - El 'fin' no se incluye, por eso funciona.
     const urnasPaginaActual = urnas.slice(indicePrimeraUrna, indiceUltimaUrna);
     const totalPaginas = Math.ceil(urnas.length / urnasPorPagina);
 
     const cambiarPagina = (nuevaPagina) => {
         if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
             setPaginaActual(nuevaPagina);
-            // Opcional: scroll al inicio del catálogo (a la sección hero)
             const heroSection = document.querySelector('.hero-section');
-            if (heroSection) {
-                // Hacemos scroll suave hacia arriba
-                heroSection.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (heroSection) heroSection.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
-    // --- Componente visual de Paginación ---
+    // Componente de Paginación con FIX de estilos
     const Paginacion = () => (
-        <div className="paginacion-catalogo">
-            <button
-                className="btn btn-outline-secondary"
+        <div className="paginacion-catalogo d-flex justify-content-center gap-2 mt-5">
+            <Button
+                variant="" // 🔴 Quita el estilo azul por defecto
+                className="btn-brand-outline"
                 onClick={() => cambiarPagina(paginaActual - 1)}
                 disabled={paginaActual === 1}
             >
                 ← Anterior
-            </button>
+            </Button>
 
             {[...Array(totalPaginas)].map((_, index) => (
-                <button
+                <Button
                     key={index}
-                    className={`btn ${
-                        paginaActual === index + 1
-                            ? "btn-primary" // Botón activo
-                            : "btn-outline-primary" // Botón inactivo
-                    }`}
+                    variant="" // 🔴 Quita el estilo azul por defecto
+                    className={paginaActual === index + 1 ? "btn-brand" : "btn-brand-outline"}
                     onClick={() => cambiarPagina(index + 1)}
                 >
                     {index + 1}
-                </button>
+                </Button>
             ))}
 
-            <button
-                className="btn btn-outline-secondary"
+            <Button
+                variant="" // 🔴 Quita el estilo azul por defecto
+                className="btn-brand-outline"
                 onClick={() => cambiarPagina(paginaActual + 1)}
                 disabled={paginaActual === totalPaginas}
             >
                 Siguiente →
-            </button>
+            </Button>
         </div>
     );
 
     return (
-        <div className="container my-4">
-            {/* HERO encabezado */}
-            <section className="hero-section rounded shadow-sm mb-4">
-                <h1>Honrando memorias con dignidad</h1>
-                <p>
-                    Nuestra colección de urnas funerarias está diseñada para ofrecer un
-                    tributo digno y respetuoso a la memoria de nuestros seres queridos.
-                </p>
+        <Container className="my-4">
+            <section className="hero-section rounded shadow-sm mb-4 text-center py-5">
+                <h1 className="display-4 fw-bold" style={{color: 'var(--color-principal)'}}>Honrando memorias con dignidad</h1>
+                <p className="lead text-muted">Nuestra colección de urnas funerarias está diseñada para ofrecer un tributo digno.</p>
             </section>
 
-            {/* PANEL DE FILTROS (Sin cambios) */}
-            <div className="filter-card shadow-sm mb-5">
+            <div className="filter-card shadow-sm mb-5 p-4 rounded" style={{backgroundColor: '#fcfcfc', border: '1px solid #e0e0e0'}}>
                 <div className="row g-3 align-items-end">
                     <div className="col-md-3">
-                        <label className="form-label">Nombre</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Buscar por nombre"
-                            value={busquedaNombre}
-                            onChange={(e) => setBusquedaNombre(e.target.value)}
-                        />
+                        <label className="form-label fw-semibold text-secondary">Nombre</label>
+                        <input type="text" className="form-control" placeholder="Buscar..." value={busquedaNombre} onChange={(e) => setBusquedaNombre(e.target.value)} />
                     </div>
-
                     <div className="col-md-3">
-                        <label className="form-label">Código</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Buscar por código"
-                            value={codigo}
-                            onChange={(e) => setCodigo(e.target.value)}
-                        />
+                        <label className="form-label fw-semibold text-secondary">Código</label>
+                        <input type="text" className="form-control" placeholder="Código..." value={codigo} onChange={(e) => setCodigo(e.target.value)} />
                     </div>
-
                     <div className="col-md-3">
-                        <label className="form-label">Material</label>
-                        <select
-                            className="form-control"
-                            value={materialId}
-                            onChange={(e) => setMaterialId(e.target.value)}
-                        >
-                            <option value="">Todos los materiales</option>
-                            {materiales.map((m) => (
-                                <option key={m.id} value={m.id}>
-                                    {m.nombre}
-                                </option>
-                            ))}
+                        <label className="form-label fw-semibold text-secondary">Material</label>
+                        <select className="form-select" value={materialId} onChange={(e) => setMaterialId(e.target.value)}>
+                            <option value="">Todos</option>
+                            {materiales.map((m) => (<option key={m.id} value={m.id}>{m.nombre}</option>))}
                         </select>
                     </div>
-
                     <div className="col-md-3">
-                        <label className="form-label d-block">Rango de precio</label>
+                        <label className="form-label d-block fw-semibold text-secondary">Rango de precio</label>
                         <div className="d-flex gap-2">
-                            <input
-                                type="number"
-                                className="form-control"
-                                placeholder="Mín"
-                                value={precioMin}
-                                onChange={(e) => setPrecioMin(e.target.value)}
-                            />
-                            <input
-                                type="number"
-                                className="form-control"
-                                placeholder="Máx"
-                                value={precioMax}
-                                onChange={(e) => setPrecioMax(e.target.value)}
-                            />
+                            <input type="number" className="form-control" placeholder="Mín" value={precioMin} onChange={(e) => setPrecioMin(e.target.value)} />
+                            <input type="number" className="form-control" placeholder="Máx" value={precioMax} onChange={(e) => setPrecioMax(e.target.value)} />
                         </div>
                     </div>
                 </div>
 
-                {/* Botones de acción */}
-                <div className="filter-actions mt-3">
-                    <button className="btn-filtrar" onClick={handleFiltrar}>
+                <div className="d-flex justify-content-center gap-3 mt-4">
+                    <Button
+                        variant="" // 🔴 Quita el estilo azul
+                        className="btn-brand px-4"
+                        onClick={handleFiltrar}
+                    >
                         <i className="bi bi-funnel-fill me-2"></i> Filtrar
-                    </button>
-                    <button className="btn-limpiar" onClick={limpiarFiltros}>
-                        <i className="bi bi-eraser-fill me-2"></i> Limpiar filtros
-                    </button>
+                    </Button>
+                    <Button
+                        variant="" // 🔴 Quita el estilo azul
+                        className="btn-brand-outline px-4"
+                        onClick={limpiarFiltros}
+                    >
+                        <i className="bi bi-eraser-fill me-2"></i> Limpiar
+                    </Button>
                 </div>
             </div>
 
-            {/* TÍTULO */}
-            <h2 className="titulo-seccion">Nuestro Catálogo</h2>
+            <h2 className="titulo-seccion mb-4" style={{color: 'var(--color-principal)'}}>Nuestro Catálogo</h2>
 
-            {/* LISTA */}
             {loading ? (
                 <div className="text-center text-muted py-5">
-                    <div className="spinner-border text-secondary" role="status" />
+                    <Spinner animation="border" style={{color: 'var(--color-secundario)'}} />
                     <p className="mt-3">Cargando catálogo...</p>
                 </div>
             ) : (
                 <>
-                    {/* 👈 Contenedor <></> agregado */}
-                    <div className="row row-cols-1 row-cols-md-3 g-4">
-                        {/* 👇 Modificado: iterar sobre 'urnasPaginaActual' */}
+                    <Row xs={1} md={3} className="g-4">
                         {urnasPaginaActual.map((urna) => (
-                            <UrnaCard
-                                key={urna.id}
-                                urna={urna}
-                                onVerDetalle={setUrnaSeleccionada}
-                            />
+                            <Col key={urna.id}>
+                                <UrnaCard urna={urna} onVerDetalle={setUrnaSeleccionada} />
+                            </Col>
                         ))}
-
-                        {/* Mensaje si no hay resultados (ahora dentro del 'row') */}
                         {urnas.length === 0 && (
-                            <div className="text-center text-muted py-5 col-12">
-                                <i className="bi bi-search"></i> Sin resultados con los filtros
-                                actuales.
-                            </div>
+                            <Col xs={12} className="text-center text-muted py-5">
+                                <i className="bi bi-search display-4 mb-3"></i>
+                                <p>Sin resultados con los filtros actuales.</p>
+                            </Col>
                         )}
-                    </div>
-
-                    {/* 👇 Añadido: Controles de Paginación */}
-                    {urnas.length > urnasPorPagina && (
-                        <Paginacion />
-                    )}
+                    </Row>
+                    {urnas.length > urnasPorPagina && <Paginacion />}
                 </>
             )}
 
-            {/* Modal de Detalle */}
-            <UrnaModal urnaSeleccionada={urnaSeleccionada} />
-
-            {/* Modal de Carrito + Botón flotante */}
-            <CarritoModal />
-            <FloatingCartButton />
-        </div>
+            <UrnaModal show={!!urnaSeleccionada} urnaSeleccionada={urnaSeleccionada} onHide={() => setUrnaSeleccionada(null)} />
+            <CarritoModal show={showCarrito} onHide={() => setShowCarrito(false)} />
+            <FloatingCartButton onClick={() => setShowCarrito(true)} />
+        </Container>
     );
 }

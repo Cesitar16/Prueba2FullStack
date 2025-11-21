@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Navbar as BSNavbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { AuthContext } from "../../context/AuthContext";
 import "../../assets/styles/estilos.css";
 
@@ -8,121 +9,86 @@ import "../../assets/styles/estilos.css";
  * Barra de navegación dinámica con detección de rol y sesión.
  */
 export function Navbar() {
-  const { usuario, logout, isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
+    const { usuario, logout, isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/"); // Redirige al inicio después de cerrar sesión
-  };
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
 
-  return (
-    <nav className="navbar navbar-expand-lg shadow-sm sticky-top custom-navbar">
-      <div className="container">
-        {/* LOGO / NOMBRE */}
-        <Link className="navbar-brand fw-bold text-light" to="/">
-          🕊️ Descansos del Recuerdo
-        </Link>
+    return (
+        <BSNavbar expand="lg" className="custom-navbar sticky-top" variant="dark">
+            <Container>
+                {/* LOGO - El color dorado se controla desde el CSS .custom-navbar .navbar-brand */}
+                <BSNavbar.Brand as={Link} to="/">
+                    🕊️ Descansos del Recuerdo
+                </BSNavbar.Brand>
 
-        {/* BOTÓN RESPONSIVE */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+                <BSNavbar.Toggle aria-controls="basic-navbar-nav" className="border-0" />
 
-        {/* CONTENIDO */}
-        <div className="collapse navbar-collapse" id="navbarNav">
-          {/* LINKS IZQUIERDA */}
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link text-light" to="/catalogo">
-                Catálogo
-              </Link>
-            </li>
+                <BSNavbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto mb-2 mb-lg-0 align-items-center">
+                        <Nav.Link as={Link} to="/catalogo">
+                            Catálogo
+                        </Nav.Link>
 
-            <li className="nav-item">
-              <Link className="nav-link text-light" to="/nosotros">
-                Nosotros
-              </Link>
-            </li>
+                        <Nav.Link as={Link} to="/nosotros">
+                            Nosotros
+                        </Nav.Link>
 
-            {/* 👑 Solo visible si el usuario es Administrador */}
-            {isAuthenticated &&
-              usuario?.rol?.toLowerCase() === "administrador" && (
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle text-warning fw-bold"
-                    href="#"
-                    id="adminDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i className="bi bi-speedometer2 me-1"></i> Vista Admin
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-end shadow">
-                    <li>
-                      <Link className="dropdown-item" to="/admin/dashboard">
-                        📊 Dashboard
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/admin/urnas">
-                        ⚰️ Urnas
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/admin/inventario">
-                        📦 Inventario
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/admin/usuarios">
-                        👤 Usuarios
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/admin/pedidos">
-                        🧾 Pedidos
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-              )}
-          </ul>
+                        {/* 👑 Menú Admin (Visible solo para Administradores) */}
+                        {isAuthenticated &&
+                            usuario?.rol?.toLowerCase() === "administrador" && (
+                                <NavDropdown
+                                    title={
+                                        <span className="text-warning fw-bold">
+                                            <i className="bi bi-speedometer2 me-1"></i> Admin
+                                        </span>
+                                    }
+                                    id="admin-nav-dropdown"
+                                    menuVariant="dark" // Menú oscuro para combinar con el fondo
+                                >
+                                    <NavDropdown.Item as={Link} to="/admin/dashboard">📊 Dashboard</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/admin/urnas">⚰️ Urnas</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/admin/inventario">📦 Inventario</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/admin/usuarios">👤 Usuarios</NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/admin/pedidos">🧾 Pedidos</NavDropdown.Item>
+                                </NavDropdown>
+                            )}
+                    </Nav>
 
-          {/* SECCIÓN DERECHA */}
-          <div className="d-flex align-items-center">
-            {isAuthenticated ? (
-              <>
-                <span className="me-3 text-light fw-semibold">
-                  <i className="bi bi-person-circle me-1"></i>
-                  {usuario?.nombre || usuario?.correo || "Usuario"}
-                </span>
-                <button
-                  className="btn btn-outline-light btn-sm"
-                  onClick={handleLogout}
-                >
-                  <i className="bi bi-box-arrow-right me-1"></i>
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <Link className="btn btn-primary btn-sm" to="/login">
-                <i className="bi bi-box-arrow-in-right me-1"></i>
-                Loguearse
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
+                    {/* SECCIÓN DERECHA: Usuario / Login */}
+                    <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                        {isAuthenticated ? (
+                            <>
+                                <span className="text-white-50 fw-medium d-flex align-items-center gap-2">
+                                    <i className="bi bi-person-circle fs-5"></i>
+                                    {usuario?.nombre || "Usuario"}
+                                </span>
+                                <Button
+                                    variant="outline-light"
+                                    size="sm"
+                                    onClick={handleLogout}
+                                    className="px-3 rounded-pill"
+                                >
+                                    Salir
+                                </Button>
+                            </>
+                        ) : (
+                            <Button
+                                as={Link}
+                                to="/login"
+                                variant="outline-warning" // Botón Dorado (outline)
+                                size="sm"
+                                className="px-4 fw-semibold rounded-pill"
+                            >
+                                <i className="bi bi-person-fill me-1"></i> Acceder
+                            </Button>
+                        )}
+                    </div>
+                </BSNavbar.Collapse>
+            </Container>
+        </BSNavbar>
+    );
 }

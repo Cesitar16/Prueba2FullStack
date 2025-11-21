@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { pedidosApi, usuariosApi } from "../../services/api";
+import { Container, Table, Button, Form, Badge, InputGroup } from "react-bootstrap";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import AdminModal from "../../components/admin/common/AdminModal.jsx";
+import "../../assets/styles/estilos.css";
 
-// Ajusta las etiquetas a lo que tengas en tu tabla estado_pedido
 const ESTADOS = [
     { id: 1, label: "Pendiente" },
-    { id: 2, label: "Preparado" },  // si en BD es "Preparando", cámbialo aquí
+    { id: 2, label: "Preparado" },
     { id: 3, label: "Despachado" },
     { id: 4, label: "Entregado" },
     { id: 5, label: "Cancelado" },
@@ -61,7 +62,6 @@ export default function PedidosAdmin() {
 
     useEffect(() => {
         loadAndHydrate();
-
         const onNuevo = () => loadAndHydrate();
         window.addEventListener("pedido:nuevo", onNuevo);
         return () => window.removeEventListener("pedido:nuevo", onNuevo);
@@ -71,9 +71,7 @@ export default function PedidosAdmin() {
         const s = q.trim().toLowerCase();
         if (!s) return rows;
         return rows.filter((p) =>
-            `${p.id} ${p.clienteNombre || ""} ${p.estado || ""}`
-                .toLowerCase()
-                .includes(s)
+            `${p.id} ${p.clienteNombre || ""} ${p.estado || ""}`.toLowerCase().includes(s)
         );
     }, [q, rows]);
 
@@ -116,140 +114,142 @@ export default function PedidosAdmin() {
         }
     };
 
-    const badgeClass = (estado) => {
+    // Helper para colores de badge (Adaptados a la paleta si se desea, o mantener funcionales)
+    const getBadgeVariant = (estado) => {
         switch (estado) {
-            case "Entregado":
-                return "badge-activo";
-            case "Pendiente":
-                return "badge-warning";
-            case "Cancelado":
-                return "badge-inactivo";
-            case "Preparado":
-            case "Despachado":
-            default:
-                return "badge-secondary";
+            case "Entregado": return "success";
+            case "Pendiente": return "warning";
+            case "Cancelado": return "danger";
+            case "Preparado": return "info";
+            case "Despachado": return "primary";
+            default: return "secondary";
         }
     };
 
-    const fmtCLP = (n) =>
-        Number(n || 0).toLocaleString("es-CL", { style: "currency", currency: "CLP" });
-
+    const fmtCLP = (n) => Number(n || 0).toLocaleString("es-CL", { style: "currency", currency: "CLP" });
     const fmtFecha = (v) => {
         try {
             const d = new Date(v);
             return isNaN(d.getTime()) ? "—" : d.toLocaleDateString("es-CL");
-        } catch {
-            return "—";
-        }
+        } catch { return "—"; }
     };
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h3 className="titulo-seccion">🧾 Gestión de Pedidos</h3>
+        <Container fluid>
+            {/* Header con estilo corporativo */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="mb-0 fw-bold" style={{ color: 'var(--color-principal)', fontFamily: 'Playfair Display, serif' }}>
+                    🧾 Gestión de Pedidos
+                </h3>
             </div>
 
-            <div className="filter-panel mb-3">
-                <input
+            {/* Buscador con estilo limpio */}
+            <InputGroup className="mb-4 shadow-sm">
+                <InputGroup.Text className="bg-white border-end-0 text-muted"><i className="bi bi-search"></i></InputGroup.Text>
+                <Form.Control
+                    className="border-start-0 ps-0"
                     placeholder="Buscar por ID, cliente, estado..."
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                 />
-            </div>
+            </InputGroup>
 
             {loading ? (
-                <p>Cargando...</p>
+                <div className="text-center py-5 text-muted">
+                    <i className="bi bi-arrow-repeat fs-1 spinner-border mb-2 border-0"></i>
+                    <p>Cargando pedidos...</p>
+                </div>
             ) : (
-                <table className="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Fecha</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {list.map((p) => (
-                        <tr key={p.id}>
-                            <td>{p.id}</td>
-                            <td>{p.clienteNombre || "-"}</td>
-                            <td>{fmtFecha(p.fechaPedido)}</td>
-                            <td>{fmtCLP(p.total)}</td>
-                            <td>
-                  <span className={`badge ${badgeClass(p.estado)}`}>
-                    {p.estado}
-                  </span>
-                            </td>
-                            <td className="text-end">
-                                <button
-                                    className="btn btn-sm btn-outline-primary me-2"
-                                    onClick={() => openEdit(p)}
-                                >
-                                    Cambiar estado
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-outline-danger"
-                                    onClick={() => openDelete(p)}
-                                >
-                                    Eliminar
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    {!list.length && (
+                <div className="table-responsive shadow-sm rounded">
+                    <Table hover bordered className="align-middle bg-white mb-0">
+                        {/* Encabezado color Madera */}
+                        <thead className="text-white" style={{ backgroundColor: 'var(--color-principal)' }}>
                         <tr>
-                            <td colSpan={6} className="text-center text-muted">
-                                No hay pedidos que coincidan con la búsqueda.
-                            </td>
+                            <th className="py-3 ps-3">ID</th>
+                            <th className="py-3">Cliente</th>
+                            <th className="py-3">Fecha</th>
+                            <th className="py-3 text-end pe-4">Total</th>
+                            <th className="py-3 text-center">Estado</th>
+                            <th className="py-3 text-end pe-4">Acciones</th>
                         </tr>
-                    )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {list.map((p) => (
+                            <tr key={p.id}>
+                                <td className="ps-3 fw-bold text-muted">#{p.id}</td>
+                                <td className="fw-medium">{p.clienteNombre || "-"}</td>
+                                <td className="text-muted small">{fmtFecha(p.fechaPedido)}</td>
+                                <td className="text-end pe-4 fw-bold text-dark">{fmtCLP(p.total)}</td>
+                                <td className="text-center">
+                                    <Badge bg={getBadgeVariant(p.estado)} className="fw-normal px-3 py-2">
+                                        {p.estado}
+                                    </Badge>
+                                </td>
+                                <td className="text-end pe-3" style={{width: '200px'}}>
+                                    <Button
+                                        variant=""
+                                        size="sm"
+                                        className="btn-brand-outline me-2"
+                                        onClick={() => openEdit(p)}
+                                    >
+                                        <i className="bi bi-pencil me-1"></i> Estado
+                                    </Button>
+                                    <Button
+                                        variant="outline-danger"
+                                        size="sm"
+                                        onClick={() => openDelete(p)}
+                                    >
+                                        <i className="bi bi-trash"></i>
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                        {!list.length && (
+                            <tr>
+                                <td colSpan={6} className="text-center py-5 text-muted">
+                                    <i className="bi bi-receipt-cutoff display-4 d-block mb-3 opacity-50"></i>
+                                    No hay pedidos que coincidan con la búsqueda.
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </Table>
+                </div>
             )}
 
             {/* Cambiar estado */}
             <AdminModal
                 open={openE}
                 title={`Actualizar estado pedido #${sel?.id}`}
-                onClose={() => {
-                    setOpenE(false);
-                    setSel(null);
-                }}
+                onClose={() => { setOpenE(false); setSel(null); }}
                 onSubmit={updateEstado}
-                submitText="Actualizar"
+                submitText="Actualizar Estado"
             >
-                <div className="form-container">
-                    <div className="mb-2">
-                        <label className="form-label">Estado</label>
-                        <select
-                            className="form-control"
+                <Form>
+                    <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold text-secondary">Estado del Pedido</Form.Label>
+                        <Form.Select
                             value={estado}
                             onChange={(e) => setEstado(e.target.value)}
+                            className="form-select-lg"
                         >
                             {ESTADOS.map((e) => (
-                                <option key={e.id} value={e.label}>
-                                    {e.label}
-                                </option>
+                                <option key={e.id} value={e.label}>{e.label}</option>
                             ))}
-                        </select>
-                    </div>
-                </div>
+                        </Form.Select>
+                    </Form.Group>
+                </Form>
             </AdminModal>
 
             {/* Eliminar */}
             <ConfirmDialog
                 open={openD}
                 title="Eliminar pedido"
-                message={`¿Eliminar el pedido #${sel?.id}?`}
-                onCancel={() => {
-                    setOpenD(false);
-                    setSel(null);
-                }}
+                message={`¿Estás seguro de eliminar el pedido #${sel?.id}? Esta acción es irreversible.`}
+                onCancel={() => { setOpenD(false); setSel(null); }}
                 onConfirm={doDelete}
+                confirmText="Sí, eliminar"
             />
-        </div>
+        </Container>
     );
 }
