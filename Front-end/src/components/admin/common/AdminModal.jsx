@@ -1,65 +1,30 @@
 import "/src/assets/styles/admin-modal.css";
+import { Modal, Button } from "react-bootstrap";
 
 /**
  * AdminModal.jsx (genérico)
  * Modal reutilizable sin lógica de imágenes.
  * Renderiza {children} y botones estándar.
  */
-export default function AdminModal({
-                                       open,
-                                       title,
-                                       children,
-                                       onClose,
-                                       onSubmit,
-                                       submitText = "Guardar",
-                                   }) {
-    if (!open) return null;
-
+export default function AdminModal({ open, title, children, onClose, onSubmit, submitText = "Guardar" }) {
     return (
-        <div
-            className="modal-backdrop"
-            style={{
-                position: "fixed",
-                inset: 0,
-                background: "rgba(0,0,0,0.45)",
-                display: "grid",
-                placeItems: "center",
-                zIndex: 1050,
-            }}
-        >
-            <div
-                className="modal-content"
-                style={{
-                    background: "#fff",
-                    borderRadius: 10,
-                    maxWidth: 750,
-                    width: "95%",
-                    boxShadow: "0 10px 30px rgba(0,0,0,.25)",
-                }}
-            >
-                {/* Header */}
-                <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h5 className="m-0">{title}</h5>
-                    <button className="btn btn-sm btn-outline-secondary" onClick={onClose}>
-                        Cerrar
-                    </button>
-                </div>
+        <Modal show={open} onHide={onClose} centered size="lg">
+            <Modal.Header closeButton>
+                <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
 
-                {/* Body */}
-                <div className="p-3">
-                    {children}
-                </div>
+            <Modal.Body>
+                {children}
+            </Modal.Body>
 
-                {/* Footer */}
-                <div className="p-3 border-top d-flex justify-content-end gap-2">
-                    <button className="btn btn-cancelar" onClick={onClose}>
-                        Cancelar
-                    </button>
-                    <button className="btn btn-guardar" onClick={onSubmit}>
-                        {submitText}
-                    </button>
-                </div>
-            </div>
-        </div>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={onClose}>
+                    Cancelar
+                </Button>
+                <Button variant="primary" onClick={onSubmit}>
+                    {submitText}
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 }

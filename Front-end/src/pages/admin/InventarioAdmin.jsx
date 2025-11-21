@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import { Container, Row, Col, Table, Button, Form, Badge, InputGroup } from "react-bootstrap";
 import { api, BASE } from "../../services/api";
 import AdminModal from "../../components/admin/common/AdminModal.jsx";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import "../../assets/styles/estilos.css";
 
 export default function InventarioAdmin() {
     const [rows, setRows] = useState([]);
@@ -16,6 +18,7 @@ export default function InventarioAdmin() {
     const [f, setF] = useState({
         urnaId:"", cantidadActual:0, cantidadMinima:0, cantidadMaxima:0, ubicacionFisica:"", estado:"Disponible"
     });
+
     const onChange = e => setF(v=>({...v, [e.target.name]: e.target.value}));
 
     const load = async () => {
@@ -33,7 +36,9 @@ export default function InventarioAdmin() {
         return s ? rows.filter(r => `${r.urnaId} ${r.ubicacionFisica} ${r.estado}`.toLowerCase().includes(s)) : rows;
     },[q, rows]);
 
+    // --- ACCIONES ---
     const openCreate = ()=>{ setF({ urnaId:"", cantidadActual:0, cantidadMinima:0, cantidadMaxima:0, ubicacionFisica:"", estado:"Disponible" }); setOpenC(true); };
+
     const createItem = async ()=>{
         try{
             const body = {
@@ -72,6 +77,7 @@ export default function InventarioAdmin() {
     };
 
     const openDelete = (r)=>{ setSel(r); setOpenD(true); };
+
     const doDelete = async ()=> {
         try{
             await api.delete(`${BASE.INVENTARIO}/api/inventario/${sel.id}`);
@@ -80,107 +86,220 @@ export default function InventarioAdmin() {
         finally { setOpenD(false); setSel(null); }
     };
 
+    // Helper para badge de estado
+    const getBadgeVariant = (r) => {
+        if (r.cantidadActual === 0) return "secondary";
+        if (r.cantidadActual <= r.cantidadMinima) return "warning";
+        return "success";
+    };
+
+    const getBadgeText = (r) => {
+        if (r.cantidadActual === 0) return "Agotado";
+        if (r.cantidadActual <= r.cantidadMinima) return "Bajo Stock";
+        return "Disponible";
+    };
+
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h3 className="titulo-seccion">📦 Gestión de Inventario</h3>
-                <button className="btn btn-guardar" onClick={openCreate}>Nuevo registro</button>
+        <Container fluid>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="mb-0 fw-bold" style={{ color: 'var(--color-principal)', fontFamily: 'Playfair Display, serif' }}>
+                    📦 Gestión de Inventario
+                </h3>
+                <Button
+                    variant=""
+                    className="btn-brand shadow-sm"
+                    onClick={openCreate}
+                >
+                    <i className="bi bi-plus-lg me-2"></i>Nuevo Registro
+                </Button>
             </div>
 
-            <div className="filter-panel mb-3">
-                <input placeholder="Buscar por urnaId, ubicación, estado..." value={q} onChange={e=>setQ(e.target.value)} />
-            </div>
+            <InputGroup className="mb-4 shadow-sm">
+                <InputGroup.Text className="bg-white border-end-0 text-muted"><i className="bi bi-search"></i></InputGroup.Text>
+                <Form.Control
+                    className="border-start-0 ps-0"
+                    placeholder="Buscar por urnaId, ubicación, estado..."
+                    value={q}
+                    onChange={e=>setQ(e.target.value)}
+                />
+            </InputGroup>
 
-            {loading ? <p>Cargando...</p> : (
-                <table className="table table-hover">
-                    <thead><tr>
-                        <th>ID</th><th>UrnaID</th><th>Actual</th><th>Mín</th><th>Máx</th><th>Ubicación</th><th>Estado</th><th></th>
-                    </tr></thead>
-                    <tbody>
-                    {list.map(r=>(
-                        <tr key={r.id}>
-                            <td>{r.id}</td>
-                            <td>{r.urnaId}</td>
-                            <td>{r.cantidadActual}</td>
-                            <td>{r.cantidadMinima}</td>
-                            <td>{r.cantidadMaxima}</td>
-                            <td>{r.ubicacionFisica || "—"}</td>
-                            <td>
-                  <span className={`badge ${r.cantidadActual<=r.cantidadMinima ? "badge-stock-bajo":"badge-activo"}`}>
-                    {r.cantidadActual<=r.cantidadMinima ? "Bajo Stock" : "Disponible"}
-                  </span>
-                            </td>
-                            <td className="text-end">
-                                <button className="btn btn-sm btn-outline-primary me-2" onClick={()=>openEdit(r)}>Editar</button>
-                                <button className="btn btn-sm btn-outline-danger" onClick={()=>openDelete(r)}>Eliminar</button>
-                            </td>
+            {loading ? (
+                <div className="text-center py-5 text-muted">
+                    <i className="bi bi-arrow-repeat fs-1 spinner-border mb-2 border-0"></i>
+                    <p>Cargando inventario...</p>
+                </div>
+            ) : (
+                <div className="table-responsive shadow-sm rounded">
+                    <Table hover bordered className="align-middle bg-white mb-0">
+                        <thead className="text-white" style={{ backgroundColor: 'var(--color-principal)' }}>
+                        <tr>
+                            <th className="py-3 ps-3">ID</th>
+                            <th className="py-3 text-center">Urna ID</th>
+                            <th className="py-3 text-center">Actual</th>
+                            <th className="py-3 text-center">Mín / Máx</th>
+                            <th className="py-3">Ubicación</th>
+                            <th className="py-3 text-center">Estado</th>
+                            <th className="py-3 text-end pe-4">Acciones</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {list.map(r=>(
+                            <tr key={r.id}>
+                                <td className="ps-3 fw-semibold text-muted">{r.id}</td>
+                                <td className="text-center fw-bold text-dark">{r.urnaId}</td>
+                                <td className="text-center fs-5 fw-bold" style={{ color: r.cantidadActual <= r.cantidadMinima ? '#dc3545' : '#198754' }}>
+                                    {r.cantidadActual}
+                                </td>
+                                <td className="text-center text-muted small">
+                                    {r.cantidadMinima} / {r.cantidadMaxima}
+                                </td>
+                                <td className="text-muted">{r.ubicacionFisica || "—"}</td>
+                                <td className="text-center">
+                                    <Badge
+                                        bg={getBadgeVariant(r)}
+                                        className="px-3 py-2 fw-normal text-uppercase"
+                                        style={{letterSpacing: '0.5px'}}
+                                    >
+                                        {getBadgeText(r)}
+                                    </Badge>
+                                </td>
+                                <td className="text-end pe-3" style={{width: '180px'}}>
+                                    <Button
+                                        variant=""
+                                        size="sm"
+                                        className="btn-brand-outline me-2"
+                                        onClick={()=>openEdit(r)}
+                                    >
+                                        <i className="bi bi-pencil"></i>
+                                    </Button>
+                                    <Button
+                                        variant="outline-danger"
+                                        size="sm"
+                                        onClick={()=>openDelete(r)}
+                                    >
+                                        <i className="bi bi-trash"></i>
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                        {!list.length && (
+                            <tr>
+                                <td colSpan={7} className="text-center py-5 text-muted">
+                                    <i className="bi bi-box2 display-4 d-block mb-3 opacity-50"></i>
+                                    No hay registros en el inventario.
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </Table>
+                </div>
             )}
 
-            {/* Create */}
+            {/* === MODAL CREAR === */}
             <AdminModal open={openC} title="Nuevo inventario" onClose={()=>setOpenC(false)} onSubmit={createItem} submitText="Crear">
-                <div className="form-container">
-                    <div className="mb-2"><label className="form-label">UrnaID</label>
-                        <input name="urnaId" className="form-control" value={f.urnaId} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Cantidad actual</label>
-                        <input type="number" name="cantidadActual" className="form-control" value={f.cantidadActual} onChange={onChange}/></div>
-                    <div className="mb-2 d-flex gap-2">
-                        <div style={{flex:1}}>
-                            <label className="form-label">Mínima</label>
-                            <input type="number" name="cantidadMinima" className="form-control" value={f.cantidadMinima} onChange={onChange}/>
-                        </div>
-                        <div style={{flex:1}}>
-                            <label className="form-label">Máxima</label>
-                            <input type="number" name="cantidadMaxima" className="form-control" value={f.cantidadMaxima} onChange={onChange}/>
-                        </div>
-                    </div>
-                    <div className="mb-2"><label className="form-label">Ubicación física</label>
-                        <input name="ubicacionFisica" className="form-control" value={f.ubicacionFisica} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Estado</label>
-                        <select name="estado" className="form-control" value={f.estado} onChange={onChange}>
-                            <option>Disponible</option><option>Bloqueado</option>
-                        </select></div>
-                </div>
+                <Form>
+                    <Row className="g-3">
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label className="fw-bold text-secondary">Urna ID</Form.Label>
+                                <Form.Control name="urnaId" value={f.urnaId} onChange={onChange} placeholder="Ej: 105" autoFocus />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Cantidad Actual</Form.Label>
+                                <Form.Control type="number" name="cantidadActual" value={f.cantidadActual} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Mínima</Form.Label>
+                                <Form.Control type="number" name="cantidadMinima" value={f.cantidadMinima} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Máxima</Form.Label>
+                                <Form.Control type="number" name="cantidadMaxima" value={f.cantidadMaxima} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label>Ubicación Física</Form.Label>
+                                <Form.Control name="ubicacionFisica" value={f.ubicacionFisica} onChange={onChange} placeholder="Ej: Bodega 1, Pasillo 3" />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label>Estado Inicial</Form.Label>
+                                <Form.Select name="estado" value={f.estado} onChange={onChange}>
+                                    <option>Disponible</option>
+                                    <option>Bloqueado</option>
+                                    <option>Agotado</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                </Form>
             </AdminModal>
 
-            {/* Edit */}
+            {/* === MODAL EDITAR === */}
             <AdminModal open={openE} title={`Editar inventario #${sel?.id}`} onClose={()=>{setOpenE(false); setSel(null);}} onSubmit={updateItem}>
-                <div className="form-container">
-                    {/* mismos campos que create */}
-                    <div className="mb-2"><label className="form-label">UrnaID</label>
-                        <input name="urnaId" className="form-control" value={f.urnaId} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Cantidad actual</label>
-                        <input type="number" name="cantidadActual" className="form-control" value={f.cantidadActual} onChange={onChange}/></div>
-                    <div className="mb-2 d-flex gap-2">
-                        <div style={{flex:1}}>
-                            <label className="form-label">Mínima</label>
-                            <input type="number" name="cantidadMinima" className="form-control" value={f.cantidadMinima} onChange={onChange}/>
-                        </div>
-                        <div style={{flex:1}}>
-                            <label className="form-label">Máxima</label>
-                            <input type="number" name="cantidadMaxima" className="form-control" value={f.cantidadMaxima} onChange={onChange}/>
-                        </div>
-                    </div>
-                    <div className="mb-2"><label className="form-label">Ubicación física</label>
-                        <input name="ubicacionFisica" className="form-control" value={f.ubicacionFisica} onChange={onChange}/></div>
-                    <div className="mb-2"><label className="form-label">Estado</label>
-                        <select name="estado" className="form-control" value={f.estado} onChange={onChange}>
-                            <option>Disponible</option><option>Bloqueado</option>
-                        </select></div>
-                </div>
+                <Form>
+                    <Row className="g-3">
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label className="fw-bold text-secondary">Urna ID</Form.Label>
+                                <Form.Control name="urnaId" value={f.urnaId} onChange={onChange} disabled className="bg-light" />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Cantidad Actual</Form.Label>
+                                <Form.Control type="number" name="cantidadActual" value={f.cantidadActual} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Mínima</Form.Label>
+                                <Form.Control type="number" name="cantidadMinima" value={f.cantidadMinima} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Máxima</Form.Label>
+                                <Form.Control type="number" name="cantidadMaxima" value={f.cantidadMaxima} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label>Ubicación Física</Form.Label>
+                                <Form.Control name="ubicacionFisica" value={f.ubicacionFisica} onChange={onChange} />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label>Estado</Form.Label>
+                                <Form.Select name="estado" value={f.estado} onChange={onChange}>
+                                    <option>Disponible</option>
+                                    <option>Bloqueado</option>
+                                    <option>Agotado</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                </Form>
             </AdminModal>
 
-            {/* Delete */}
+            {/* === DIALOGO ELIMINAR === */}
             <ConfirmDialog
                 open={openD}
                 title="Eliminar registro"
-                message={`¿Eliminar inventario #${sel?.id}?`}
+                message={`¿Eliminar inventario #${sel?.id}? Esta acción no se puede deshacer.`}
                 onCancel={()=>{setOpenD(false); setSel(null);}}
                 onConfirm={doDelete}
             />
-        </div>
+        </Container>
     );
 }

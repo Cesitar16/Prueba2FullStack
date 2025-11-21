@@ -1,14 +1,16 @@
-export function FloatingCartButton() {
-  return (
-    <button
-      className="floating-cart-btn"
-      type="button"
-      data-bs-toggle="modal"
-      data-bs-target="#carritoModal"
-      aria-label="Abrir carrito"
-      title="Abrir carrito"
-    >
-      <i className="bi bi-cart3"></i>
-    </button>
-  );
+import { Button } from "react-bootstrap";
+import "../../assets/styles/estilos.css";
+
+export function FloatingCartButton({ onClick }) {
+    return (
+        <Button
+            // Aplicamos nuestra clase personalizada que tiene los !important
+            className="floating-cart-btn"
+            onClick={onClick}
+            // variant="link" elimina fondos base para que nuestro CSS actúe mejor
+            variant="link"
+        >
+            <i className="bi bi-cart3"></i>
+        </Button>
+    );
 }

@@ -1,49 +1,46 @@
 import { useEffect, useMemo, useState } from "react";
+import { Container, Table, Button, Form, Badge, InputGroup } from "react-bootstrap";
 import { api, BASE } from "../../services/api";
 import AdminModal from "../../components/admin/common/AdminModal.jsx";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import "../../assets/styles/estilos.css";
 
 export default function UsuariosAdmin() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // búsqueda
     const [q, setQ] = useState("");
-    const filtrados = useMemo(() => {
-        const s = q.trim().toLowerCase();
-        return s ? data.filter(u =>
-            `${u.nombre} ${u.correo} ${u.rol} ${u.estado}`.toLowerCase().includes(s)
-        ) : data;
-    }, [q, data]);
 
-    // CRUD states
+    // Estados CRUD
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDel, setOpenDel] = useState(false);
     const [sel, setSel] = useState(null);
-
     const [form, setForm] = useState({ nombre:"", correo:"", password:"", rol:"Cliente", estado:"Activo" });
+
+    // Filtrado
+    const filtrados = useMemo(() => {
+        const s = q.trim().toLowerCase();
+        return s ? data.filter(u => `${u.nombre} ${u.correo} ${u.rol} ${u.estado}`.toLowerCase().includes(s)) : data;
+    }, [q, data]);
 
     const load = async () => {
         setLoading(true);
         try {
             const res = await api.get(`${BASE.USUARIOS}/api/usuarios`);
             setData(res.data || []);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
+        } catch (e) { console.error(e); }
+        finally { setLoading(false); }
     };
+
     useEffect(() => { load(); }, []);
 
     const onChange = e => setForm(f => ({...f, [e.target.name]: e.target.value}));
 
-    // CREATE
+    // Acciones
     const openCreateModal = () => { setForm({ nombre:"", correo:"", password:"", rol:"Cliente", estado:"Activo" }); setOpenCreate(true); };
+
     const createUser = async () => {
         try {
-            // tu API de registro pide nombre, correo, password y rol
             const body = { nombre: form.nombre, correo: form.correo, password: form.password, rol: form.rol };
             const res = await api.post(`${BASE.USUARIOS}/api/auth/register`, body);
             setData(prev => [res.data, ...prev]);
@@ -51,126 +48,172 @@ export default function UsuariosAdmin() {
         } catch (e) { console.error(e); }
     };
 
-    // EDIT
     const openEditModal = (u) => {
         setSel(u);
         setForm({ nombre: u.nombre || "", correo: u.correo || "", password:"", rol: u.rol || "Cliente", estado: u.estado || "Activo" });
         setOpenEdit(true);
     };
+
     const updateUser = async () => {
         try {
             const body = { nombre: form.nombre, rol: form.rol, estado: form.estado };
             await api.patch(`${BASE.USUARIOS}/api/usuarios/${sel.id}`, body);
             setData(prev => prev.map(x => x.id === sel.id ? {...x, ...body} : x));
-            setOpenEdit(false);
-            setSel(null);
+            setOpenEdit(false); setSel(null);
         } catch (e) { console.error(e); }
     };
 
-    // DELETE (o desactivar)
     const openDelete = (u) => { setSel(u); setOpenDel(true); };
+
     const doDelete = async () => {
         try {
-            // si no tienes DELETE, comenta esto y usa un PATCH estado=Inactivo
             await api.delete(`${BASE.USUARIOS}/api/usuarios/${sel.id}`);
             setData(prev => prev.filter(x => x.id !== sel.id));
-            // eslint-disable-next-line no-unused-vars
-        } catch (e) {
-            // fallback: desactivar
-            try {
-                await api.patch(`${BASE.USUARIOS}/api/usuarios/${sel.id}`, { estado: "Inactivo" });
-                setData(prev => prev.map(x => x.id === sel.id ? {...x, estado:"Inactivo"} : x));
-            } catch (err2) { console.error(err2); }
-        } finally {
-            setOpenDel(false);
-            setSel(null);
-        }
+        } catch (e) { console.error(e); }
+        finally { setOpenDel(false); setSel(null); }
     };
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h3 className="titulo-seccion">👥 Gestión de Usuarios</h3>
-                <button className="btn btn-guardar" onClick={openCreateModal}>Nuevo usuario</button>
+        <Container fluid>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="mb-0 fw-bold" style={{ color: 'var(--color-principal)', fontFamily: 'Playfair Display, serif' }}>
+                    👤 Gestión de Usuarios
+                </h3>
+                <Button
+                    variant=""
+                    className="btn-brand shadow-sm"
+                    onClick={openCreateModal}
+                >
+                    <i className="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
+                </Button>
             </div>
 
-            <div className="filter-panel mb-3">
-                <input placeholder="Buscar: nombre, correo, rol, estado..." value={q} onChange={e=>setQ(e.target.value)} />
-            </div>
+            <InputGroup className="mb-4 shadow-sm">
+                <InputGroup.Text className="bg-white border-end-0 text-muted"><i className="bi bi-search"></i></InputGroup.Text>
+                <Form.Control
+                    className="border-start-0 ps-0"
+                    placeholder="Buscar por nombre, correo, rol..."
+                    value={q}
+                    onChange={e=>setQ(e.target.value)}
+                />
+            </InputGroup>
 
-            {loading ? <p>Cargando...</p> : (
-                <table className="table table-hover">
-                    <thead><tr>
-                        <th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th></th>
-                    </tr></thead>
-                    <tbody>
-                    {filtrados.map(u=>(
-                        <tr key={u.id}>
-                            <td>{u.id}</td>
-                            <td>{u.nombre}</td>
-                            <td>{u.correo}</td>
-                            <td>{u.rol}</td>
-                            <td><span className={`badge ${u.estado==="Activo"?"badge-activo":"badge-inactivo"}`}>{u.estado}</span></td>
-                            <td className="text-end">
-                                <button className="btn btn-sm btn-outline-primary me-2" onClick={()=>openEditModal(u)}>Editar</button>
-                                <button className="btn btn-sm btn-outline-danger" onClick={()=>openDelete(u)}>Eliminar</button>
-                            </td>
+            {loading ? <div className="text-center py-5">Cargando...</div> : (
+                <div className="table-responsive shadow-sm rounded">
+                    <Table hover bordered className="align-middle bg-white mb-0">
+                        <thead className="text-white" style={{ backgroundColor: 'var(--color-principal)' }}>
+                        <tr>
+                            <th className="py-3 ps-3">ID</th>
+                            <th className="py-3">Nombre</th>
+                            <th className="py-3">Correo</th>
+                            <th className="py-3">Rol</th>
+                            <th className="py-3 text-center">Estado</th>
+                            <th className="py-3 text-end pe-4">Acciones</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {filtrados.map(u=>(
+                            <tr key={u.id}>
+                                <td className="ps-3 fw-semibold text-muted">{u.id}</td>
+                                <td className="fw-medium">{u.nombre}</td>
+                                <td className="text-muted small">{u.correo}</td>
+                                <td>
+                                    <Badge bg="light" text="dark" className="border fw-normal">
+                                        {u.rol}
+                                    </Badge>
+                                </td>
+                                <td className="text-center">
+                                    <Badge
+                                        bg={u.estado==="Activo" ? "success" : "secondary"}
+                                        className="px-3 py-2 fw-normal"
+                                    >
+                                        {u.estado}
+                                    </Badge>
+                                </td>
+                                <td className="text-end pe-3" style={{width: '180px'}}>
+                                    <Button
+                                        variant=""
+                                        size="sm"
+                                        className="btn-brand-outline me-2"
+                                        onClick={()=>openEditModal(u)}
+                                    >
+                                        <i className="bi bi-pencil"></i>
+                                    </Button>
+                                    <Button
+                                        variant="outline-danger"
+                                        size="sm"
+                                        onClick={()=>openDelete(u)}
+                                    >
+                                        <i className="bi bi-trash"></i>
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </Table>
+                </div>
             )}
 
-            {/* Create */}
+            {/* Create Modal */}
             <AdminModal open={openCreate} title="Nuevo usuario" onClose={()=>setOpenCreate(false)} onSubmit={createUser} submitText="Crear">
-                <div className="form-container">
-                    <div className="mb-2">
-                        <label className="form-label">Nombre</label>
-                        <input className="form-control" name="nombre" value={form.nombre} onChange={onChange} required/>
-                    </div>
-                    <div className="mb-2">
-                        <label className="form-label">Correo</label>
-                        <input type="email" className="form-control" name="correo" value={form.correo} onChange={onChange} required/>
-                    </div>
-                    <div className="mb-2">
-                        <label className="form-label">Contraseña</label>
-                        <input type="password" className="form-control" name="password" value={form.password} onChange={onChange} required/>
-                    </div>
-                    <div className="mb-2">
-                        <label className="form-label">Rol</label>
-                        <select className="form-control" name="rol" value={form.rol} onChange={onChange}>
+                <Form>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Nombre</Form.Label>
+                        <Form.Control name="nombre" value={form.nombre} onChange={onChange} required />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Correo</Form.Label>
+                        <Form.Control type="email" name="correo" value={form.correo} onChange={onChange} required />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Contraseña</Form.Label>
+                        <Form.Control
+                            type="password"
+                            name="password"
+                            value={form.password}
+                            onChange={onChange}
+                            required
+                            minLength={8} // 👈 Agrega esta validación nativa HTML
+                            placeholder="Mínimo 8 caracteres"
+                        />
+                        <Form.Text className="text-muted">
+                            Debe tener al menos 8 caracteres.
+                        </Form.Text>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Rol</Form.Label>
+                        <Form.Select name="rol" value={form.rol} onChange={onChange}>
                             <option>Cliente</option>
                             <option>Administrador</option>
-                        </select>
-                    </div>
-                </div>
+                        </Form.Select>
+                    </Form.Group>
+                </Form>
             </AdminModal>
 
-            {/* Edit */}
+            {/* Edit Modal */}
             <AdminModal open={openEdit} title={`Editar usuario #${sel?.id}`} onClose={()=>{setOpenEdit(false); setSel(null);}} onSubmit={updateUser}>
-                <div className="form-container">
-                    <div className="mb-2">
-                        <label className="form-label">Nombre</label>
-                        <input className="form-control" name="nombre" value={form.nombre} onChange={onChange}/>
-                    </div>
-                    <div className="mb-2">
-                        <label className="form-label">Rol</label>
-                        <select className="form-control" name="rol" value={form.rol} onChange={onChange}>
+                <Form>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Nombre</Form.Label>
+                        <Form.Control name="nombre" value={form.nombre} onChange={onChange} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Rol</Form.Label>
+                        <Form.Select name="rol" value={form.rol} onChange={onChange}>
                             <option>Cliente</option>
                             <option>Administrador</option>
-                        </select>
-                    </div>
-                    <div className="mb-2">
-                        <label className="form-label">Estado</label>
-                        <select className="form-control" name="estado" value={form.estado} onChange={onChange}>
+                        </Form.Select>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Estado</Form.Label>
+                        <Form.Select name="estado" value={form.estado} onChange={onChange}>
                             <option>Activo</option>
                             <option>Inactivo</option>
-                        </select>
-                    </div>
-                </div>
+                        </Form.Select>
+                    </Form.Group>
+                </Form>
             </AdminModal>
 
-            {/* Delete */}
             <ConfirmDialog
                 open={openDel}
                 title="Eliminar usuario"
@@ -178,6 +221,6 @@ export default function UsuariosAdmin() {
                 onCancel={()=>{setOpenDel(false); setSel(null);}}
                 onConfirm={doDelete}
             />
-        </div>
+        </Container>
     );
 }

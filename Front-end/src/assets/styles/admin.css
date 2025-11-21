@@ -1,5 +1,8 @@
 .admin-layout {
-    height: 100vh;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--color-fondo);
 }
 
 .sidebar-admin {
@@ -64,11 +67,146 @@
 }
 
 .sidebar-admin-modern {
-    background: linear-gradient(180deg, #212529 0%, #343a40 100%);
+    /* Fondo degradado Madera Oscura */
+    background: linear-gradient(180deg, #5a4634 0%, #3e2f21 100%);
     color: #fff;
-    width: 240px;
-    min-height: 100vh;
-    padding: 1.5rem 1rem;
+
+    /* Transición suave de ancho */
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Sombra profunda */
+    box-shadow: 4px 0 15px rgba(0,0,0,0.25);
+
+    /* Flex */
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    position: sticky;
+    top: 0;
+    height: 100vh; /* Fijo al alto de la ventana */
+}
+
+.sidebar-expanded {
+    width: 260px;
+    min-width: 260px;
+}
+
+.sidebar-collapsed {
+    width: 90px; /* Un poco más ancho para botones grandes */
+    min-width: 90px;
+}
+
+/* === ELEMENTOS DEL NAV === */
+.sidebar-admin-modern .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    border-radius: 12px; /* Bordes más suaves */
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border: 1px solid transparent; /* Para evitar saltos al hover */
+}
+
+/* Iconos siempre centrados o con margen fijo */
+.sidebar-admin-modern .nav-link svg {
+    font-size: 1.2rem;
+    min-width: 24px; /* Espacio reservado para el icono */
+    margin-right: 12px;
+    transition: margin 0.3s;
+}
+
+/* Texto del enlace */
+.sidebar-link-text {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Ajustes cuando está CONTRAÍDO */
+.sidebar-collapsed .nav-link {
+    justify-content: center; /* Centrar todo */
+    padding: 18px 0; /* 🟢 Padding vertical GRANDE para aumentar área de clic */
+    margin: 0 8px 8px 8px; /* Margen lateral pequeño */
+    width: calc(100% - 16px); /* Ocupar casi todo el ancho */
+}
+
+.sidebar-collapsed .nav-link svg {
+    font-size: 1.6rem; /* 🟢 Ícono más grande para mejor visibilidad */
+    margin-right: 0;
+}
+
+.sidebar-collapsed .sidebar-link-text,
+.sidebar-collapsed .logo-text {
+    display: none;
+    opacity: 0;
+}
+
+.sidebar-collapsed .nav-link:hover {
+    transform: scale(1.05); /* En colapsado, crece un poco en lugar de moverse */
+}
+
+/* === ESTADOS ACTIVOS Y HOVER (Colores Corporativos) === */
+.sidebar-admin-modern .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #d4af37; /* Dorado */
+    transform: translateX(3px); /* Pequeño movimiento a la derecha */
+}
+
+.sidebar-admin-modern .nav-link.active {
+    background: linear-gradient(135deg, #d4af37 0%, #b9962f 100%); /* Dorado degradado */
+    color: #3e2f21; /* Texto café oscuro */
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border: none;
+}
+
+.sidebar-admin-modern .nav-link.active svg {
+    color: #3e2f21; /* Ícono café oscuro */
+}
+
+/* Botón de toggle */
+.btn-toggle-sidebar {
+    background: transparent;
+    border: none;
+    color: #d4af37; /* Dorado */
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.btn-toggle-sidebar:hover {
+    background-color: rgba(212, 175, 55, 0.15);
+    color: #fff;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+}
+
+.sidebar-expanded .nav-link {
+    padding: 12px 16px;
+    margin: 0 10px 8px 10px; /* Margen lateral para que flote un poco */
+}
+
+.sidebar-expanded .nav-link svg {
+    font-size: 1.3rem;
+    min-width: 24px;
+    margin-right: 14px;
+    transition: transform 0.2s;
 }
 .sidebar-admin-modern .logo {
     font-weight: bold;

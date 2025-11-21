@@ -38,39 +38,42 @@ a:hover {
    🧭 NAVBAR
    =========================================== */
 .custom-navbar {
-  background-color: rgba(75, 46, 23, 0.95); /* marrón cálido translúcido */
-  backdrop-filter: blur(6px);
-  color: #fff !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-  transition: background-color 0.3s ease-in-out;
+    /* Mismo degradado que el footer pero horizontal para la barra */
+    background: linear-gradient(90deg, #5a4634 0%, #3e2f21 100%) !important;
+
+    /* Borde inferior DORADO */
+    border-bottom: 3px solid #d4af37;
+
+    /* Sombra suave para separarlo del contenido */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
 
+/* Marca / Logo */
 .custom-navbar .navbar-brand {
-  color: #f6e8c5 !important;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+    font-family: "Playfair Display", serif;
+    color: #d4af37 !important; /* Dorado */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
 }
 
+.custom-navbar .navbar-brand:hover {
+    color: #fff !important; /* Blanco al pasar el mouse */
+}
+
+/* Enlaces de navegación */
 .custom-navbar .nav-link {
-  color: #f9f9f9 !important;
-  font-weight: 500;
-  margin-right: 15px;
-  transition: color 0.2s ease-in-out;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
-.custom-navbar .nav-link:hover {
-  color: #ffd37a !important;
-}
-
-.custom-navbar .btn-outline-light {
-  color: #fff !important;
-  border-color: #fff !important;
-  font-weight: 500;
-}
-
-.custom-navbar .btn-outline-light:hover {
-  background-color: #fff !important;
-  color: #4b2e17 !important;
+/* Efecto Hover en enlaces: se vuelven dorados */
+.custom-navbar .nav-link:hover,
+.custom-navbar .nav-link.active {
+    color: #d4af37 !important;
 }
 
 /* ===========================================
@@ -305,11 +308,21 @@ a:hover {
 }
 
 .product-card:hover {
-  transform: translateY(-6px);
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.35),
-    inset 0 0 25px rgba(255, 255, 255, 0.2);
-  filter: saturate(1.05) brightness(1);
+    border-color: var(--color-secundario) !important;
+    box-shadow: 0 10px 20px rgba(90, 70, 52, 0.15) !important;
+}
+
+.thumb-img {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+.thumb-img:hover {
+    transform: scale(1.05);
+}
+.thumb-img.active {
+    border-color: var(--color-secundario) !important; /* Dorado */
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
 }
 
 /* 🖼 Imagen superior */
@@ -653,29 +666,153 @@ footer a:hover {
    🛍️ BOTÓN FLOTANTE DE CARRITO
    =========================================== */
 .floating-cart-btn {
-  position: fixed;
-  right: 20px;
-  bottom: 24px;
-  z-index: 1100;
-  width: 54px;
-  height: 54px;
-  border: none;
-  border-radius: 50%;
-  background: var(--color-principal);
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
-  display: grid;
-  place-items: center;
-  transition: transform 0.2s ease, background 0.2s ease;
+    /* Posicionamiento fijo */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1050;
+
+    /* Dimensiones y forma circular forzada */
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+
+    /* Colores de Marca (Sobrescribiendo Bootstrap) */
+    background-color: var(--color-principal) !important; /* Madera */
+    border: 2px solid #fff !important; /* Borde blanco para resaltar sobre fondos oscuros */
+    color: #fff !important;
+
+    /* Centrado del ícono */
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding: 0 !important;
+
+    /* Sombra y Transición */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; /* Efecto rebote suave */
 }
 
 .floating-cart-btn:hover {
-  background: var(--color-secundario);
-  transform: translateY(-3px);
+    background-color: var(--color-secundario) !important; /* Dorado */
+    border-color: #fff !important;
+    transform: scale(1.1) translateY(-5px); /* Crece un poco y sube */
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important; /* Resplandor dorado */
 }
 
 .floating-cart-btn i {
-  font-size: 1.3rem;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.custom-footer {
+    /* Usamos un marrón muy oscuro (variante de tu color principal) para el fondo */
+    background: linear-gradient(180deg, #5a4634 0%, #3e2f21 100%);
+    color: #f8f9fa; /* Texto casi blanco */
+    border-top: 4px solid #d4af37; /* Borde superior Dorado elegante */
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+}
+
+.custom-footer h5 {
+    color: #d4af37; /* Títulos en Dorado */
+    font-family: "Playfair Display", serif; /* Tu fuente elegante */
+    font-weight: 700;
+}
+
+.custom-footer a {
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.custom-footer a:hover {
+    color: #d4af37; /* Al pasar el mouse, se pone dorado */
+    text-decoration: none;
+    padding-left: 5px; /* Pequeño efecto de movimiento */
+}
+
+.custom-footer hr {
+    border-color: rgba(212, 175, 55, 0.3); /* Línea separadora dorada tenue */
+    opacity: 1;
+}
+
+/* === BOTONES CORPORATIVOS (Madera y Dorado) === */
+
+/* Botón Principal (Madera con hover Dorado) - Para "Filtrar" y Pagina Activa */
+.btn-brand {
+    background-color: var(--color-principal) !important; /* Madera */
+    border-color: var(--color-principal) !important;
+    color: #fff !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-brand:hover,
+.btn-brand:active,
+.btn-brand:focus {
+    background-color: var(--color-secundario) !important; /* Dorado */
+    border-color: var(--color-secundario) !important;
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Botón Secundario (Outline) - Para "Limpiar" y Paginación inactiva */
+.btn-brand-outline {
+    background-color: transparent !important;
+    border: 2px solid var(--color-principal) !important; /* Borde Madera */
+    color: var(--color-principal) !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-brand-outline:hover {
+    background-color: var(--color-principal) !important;
+    color: #fff !important; /* Texto blanco al hacer hover */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Ajustes específicos para la paginación */
+.paginacion-catalogo .btn {
+    min-width: 40px;
+    margin: 0 3px;
+    border-radius: 8px;
+}
+
+/* === MODAL CORPORATIVO === */
+.modal-header-brand {
+    background: linear-gradient(90deg, #5a4634 0%, #3e2f21 100%);
+    color: #fff;
+    border-bottom: 3px solid var(--color-secundario);
+}
+
+.modal-header-brand .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* === AJUSTES MODAL DE PRODUCTO === */
+
+/* 1. Forzar centrado vertical y horizontal */
+.modal-dialog-centered {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: calc(100% - 3.5rem) !important;
+}
+
+/* 2. Definir un ancho personalizado "ancho pero no gigante" */
+@media (min-width: 992px) {
+    .modal-custom-width {
+        max-width: 1000px !important; /* Más ancho que 'lg' (800px) pero controlado */
+        width: 95% !important;
+    }
+}
+
+/* 3. Ajuste de altura de la imagen para que no estire el modal */
+.modal-product-img {
+    max-height: 400px;
+    object-fit: contain;
+    width: 100%;
+    background-color: #f8f9fa; /* Fondo gris suave para rellenar espacios */
 }
 
 /* ===========================================
