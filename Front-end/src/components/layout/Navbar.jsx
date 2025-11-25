@@ -33,6 +33,10 @@ export function Navbar() {
                             Catálogo
                         </Nav.Link>
 
+                        <Nav.Link as={Link} to="/foro">
+                            Foro
+                        </Nav.Link>
+
                         <Nav.Link as={Link} to="/nosotros">
                             Nosotros
                         </Nav.Link>
