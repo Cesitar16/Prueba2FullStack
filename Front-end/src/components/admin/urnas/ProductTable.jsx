@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ProductForm } from "./ProductForm";
-import { AlertBadge } from "./AlertBadge";
-import "../assets/styles/vistaAdmin.css";
+import { AlertBadge } from "../../common/AlertBadge";
+import "../../../assets/styles/vistaAdmin.css";
 
 export function ProductTable() {
   const [urnas, setUrnas] = useState([]);

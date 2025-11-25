@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { pedidosApi, usuariosApi } from "../../services/api";
-import ConfirmDialog from "../../components/admin/ConfirmDialog";
-import AdminModal from "../../components/admin/AdminModal.jsx";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+import AdminModal from "../../components/admin/common/AdminModal.jsx";
 
 // Ajusta las etiquetas a lo que tengas en tu tabla estado_pedido
 const ESTADOS = [

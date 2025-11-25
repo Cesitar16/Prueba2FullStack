@@ -1,5 +1,3 @@
-/* src/assets/styles/admin.css */
-
 .admin-layout {
     height: 100vh;
 }
@@ -27,26 +25,42 @@
     flex: 1 1 220px;
     background: linear-gradient(135deg, var(--card-color) 0%, #ffffff 100%);
     color: #fff;
-    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 150px;
     padding: 20px;
+    border-radius: 16px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     transition: transform .3s, box-shadow .3s;
 }
+
 .stat-card-modern:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
 }
 .stat-card-modern .emoji {
     font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 .stat-card-modern h4 {
     font-size: 1.1rem;
-    margin: 10px 0 0;
+    margin: 0 0 0.25rem 0;
 }
 .stat-card-modern p {
     font-size: 2rem;
     font-weight: bold;
     margin: 0;
+}
+
+.dashboard-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* O el gap que tenías antes */
+    justify-content: center;
+    margin-top: 2rem; /* <--- AÑADE ESTA LÍNEA */
 }
 
 .sidebar-admin-modern {

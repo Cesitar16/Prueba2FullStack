@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { UserForm } from "./UserForm";
-import "../assets/styles/vistaAdmin.css";
+import "../../../assets/styles/vistaAdmin.css";
 
 export function UserTable() {
   const [usuarios, setUsuarios] = useState([]);

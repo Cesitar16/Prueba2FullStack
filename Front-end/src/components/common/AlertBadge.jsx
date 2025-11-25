@@ -1,4 +1,4 @@
-import "../assets/styles/estilos.css";
+import "../../assets/styles/estilos.css";
 
 /**
  * AlertBadge.jsx

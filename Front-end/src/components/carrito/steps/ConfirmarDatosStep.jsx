@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import { usuariosApi } from "../../services/api";
-import "../../assets/styles/animate.css";
+import { AuthContext } from "../../../context/AuthContext";
+import { usuariosApi } from "../../../services/api";
+import "../../../assets/styles/animate.css";
 
 /**
  * ConfirmarDatosStep.jsx

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { UrnaCard } from "../components/UrnaCard";
-import { UrnaModal } from "../components/UrnaModal";
-import { CarritoModal } from "../components/CarritoModal";
-import { FloatingCartButton } from "../components/FloatingCartButton";
+import { UrnaCard } from "../components/catalogo/UrnaCard";
+import { UrnaModal } from "../components/catalogo/UrnaModal";
+import { CarritoModal } from "../components/carrito/CarritoModal";
+import { FloatingCartButton } from "../components/carrito/FloatingCartButton";
 import { catalogoApi, inventarioApi } from "../services/api"; // ⬅️ usamos ambos
 import "../assets/styles/estilos.css";
 
 export function Catalogo() {
-    const [urnas, setUrnas] = useState([]);
+    const [urnas, setUrnas] = useState([]); // Todas las urnas (filtradas)
     const [urnaSeleccionada, setUrnaSeleccionada] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -20,6 +20,10 @@ export function Catalogo() {
 
     // combos
     const [materiales, setMateriales] = useState([]);
+
+    // 📄 PAGINACIÓN
+    const [paginaActual, setPaginaActual] = useState(1);
+    const urnasPorPagina = 12; // Mostramos 12 productos por página
 
     // --- helpers ---
 
@@ -45,6 +49,7 @@ export function Catalogo() {
     // Llamada unificada (con o sin filtros)
     const fetchUrnasConStock = async (filters = {}) => {
         setLoading(true);
+        setPaginaActual(1); // 👈 Importante: Resetear a página 1 en cada filtro
         try {
             // urnas (con filtros) + inventario
             const [uRes, invRes] = await Promise.all([
@@ -99,6 +104,60 @@ export function Catalogo() {
         await fetchUrnasConStock({});
     };
 
+    // --- Lógica de Paginación ---
+    const indiceUltimaUrna = paginaActual * urnasPorPagina;
+    const indicePrimeraUrna = indiceUltimaUrna - urnasPorPagina;
+    // slice(inicio, fin) - El 'fin' no se incluye, por eso funciona.
+    const urnasPaginaActual = urnas.slice(indicePrimeraUrna, indiceUltimaUrna);
+    const totalPaginas = Math.ceil(urnas.length / urnasPorPagina);
+
+    const cambiarPagina = (nuevaPagina) => {
+        if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+            setPaginaActual(nuevaPagina);
+            // Opcional: scroll al inicio del catálogo (a la sección hero)
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                // Hacemos scroll suave hacia arriba
+                heroSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    };
+
+    // --- Componente visual de Paginación ---
+    const Paginacion = () => (
+        <div className="paginacion-catalogo">
+            <button
+                className="btn btn-outline-secondary"
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual === 1}
+            >
+                ← Anterior
+            </button>
+
+            {[...Array(totalPaginas)].map((_, index) => (
+                <button
+                    key={index}
+                    className={`btn ${
+                        paginaActual === index + 1
+                            ? "btn-primary" // Botón activo
+                            : "btn-outline-primary" // Botón inactivo
+                    }`}
+                    onClick={() => cambiarPagina(index + 1)}
+                >
+                    {index + 1}
+                </button>
+            ))}
+
+            <button
+                className="btn btn-outline-secondary"
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual === totalPaginas}
+            >
+                Siguiente →
+            </button>
+        </div>
+    );
+
     return (
         <div className="container my-4">
             {/* HERO encabezado */}
@@ -110,7 +169,7 @@ export function Catalogo() {
                 </p>
             </section>
 
-            {/* PANEL DE FILTROS */}
+            {/* PANEL DE FILTROS (Sin cambios) */}
             <div className="filter-card shadow-sm mb-5">
                 <div className="row g-3 align-items-end">
                     <div className="col-md-3">
@@ -193,22 +252,32 @@ export function Catalogo() {
                     <p className="mt-3">Cargando catálogo...</p>
                 </div>
             ) : (
-                <div className="row row-cols-1 row-cols-md-3 g-4">
-                    {urnas.map((urna) => (
-                        <UrnaCard
-                            key={urna.id}
-                            urna={urna}               // ← ahora trae urna.stock
-                            onVerDetalle={setUrnaSeleccionada}
-                        />
-                    ))}
+                <>
+                    {/* 👈 Contenedor <></> agregado */}
+                    <div className="row row-cols-1 row-cols-md-3 g-4">
+                        {/* 👇 Modificado: iterar sobre 'urnasPaginaActual' */}
+                        {urnasPaginaActual.map((urna) => (
+                            <UrnaCard
+                                key={urna.id}
+                                urna={urna}
+                                onVerDetalle={setUrnaSeleccionada}
+                            />
+                        ))}
 
-                    {urnas.length === 0 && (
-                        <div className="text-center text-muted py-5">
-                            <i className="bi bi-search"></i> Sin resultados con los filtros
-                            actuales.
-                        </div>
+                        {/* Mensaje si no hay resultados (ahora dentro del 'row') */}
+                        {urnas.length === 0 && (
+                            <div className="text-center text-muted py-5 col-12">
+                                <i className="bi bi-search"></i> Sin resultados con los filtros
+                                actuales.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 👇 Añadido: Controles de Paginación */}
+                    {urnas.length > urnasPorPagina && (
+                        <Paginacion />
                     )}
-                </div>
+                </>
             )}
 
             {/* Modal de Detalle */}

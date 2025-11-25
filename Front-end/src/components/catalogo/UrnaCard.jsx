@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { CarritoContext } from "../context/CarritoContext";
-import placeholder from "../assets/img/placeholder.png";
-import "../assets/styles/estilos.css";
+import { CarritoContext } from "../../context/CarritoContext";
+import placeholder from "../../assets/img/placeholder.png";
+import "../../assets/styles/estilos.css";
 
 export function UrnaCard({ urna, onVerDetalle }) {
   const { agregarAlCarrito } = useContext(CarritoContext);

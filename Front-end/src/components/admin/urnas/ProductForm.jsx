@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "../assets/styles/vistaAdmin.css";
+import "../../../assets/styles/vistaAdmin.css";
 
 export function ProductForm({ productoEdit, onSave }) {
   const [producto, setProducto] = useState({
