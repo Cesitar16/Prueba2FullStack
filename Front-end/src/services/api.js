@@ -251,6 +251,19 @@ export const pedidosApi = {
 };
 
 /* =========================================
+   🛒 CARRITO (PERSISTENCIA EN PEDIDOS API 8005)
+   ========================================= */
+export const carritoApi = {
+    obtener: (usuarioId) => api.get(`${BASE.PEDIDOS}/api/carrito/${usuarioId}`),
+    agregar: (usuarioId, urnaId, cantidad) =>
+        api.post(`${BASE.PEDIDOS}/api/carrito/${usuarioId}/items`, { urnaId, cantidad }),
+    eliminar: (usuarioId, urnaId) =>
+        api.delete(`${BASE.PEDIDOS}/api/carrito/${usuarioId}/items/${urnaId}`),
+    vaciar: (usuarioId) =>
+        api.delete(`${BASE.PEDIDOS}/api/carrito/${usuarioId}`)
+};
+
+/* =========================================
    🌎 UBICACIÓN (8001)
    ========================================= */
 export const ubicacionApi = {
