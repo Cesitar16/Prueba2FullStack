@@ -1,98 +1,133 @@
-import { createContext, useEffect, useState } from "react";
-import axios from "axios";
+import { createContext, useState, useEffect, useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import { carritoApi, catalogoApi } from "../services/api"; // 👈 IMPORTA catalogoApi TAMBIÉN
 
 export const CarritoContext = createContext();
 
-/**
- * CarritoContext.jsx
- * Estado global del carrito, persistencia y compra (Pedidos)
- */
-export function CarritoProvider({ children }) {
-  const [carrito, setCarrito] = useState([]);
-  const [total, setTotal] = useState(0);
+export const CarritoProvider = ({ children }) => {
+    const { usuario, isAuthenticated } = useContext(AuthContext);
+    const [carrito, setCarrito] = useState([]);
 
-  // 🔹 Cargar carrito desde localStorage al iniciar
-  useEffect(() => {
-    const saved = localStorage.getItem("carrito");
-    if (saved) setCarrito(JSON.parse(saved));
-  }, []);
+    // 1. Cargar carrito inicial
+    useEffect(() => {
+        if (isAuthenticated && usuario) {
+            cargarCarritoRemoto();
+        } else {
+            // Modo invitado: LocalStorage
+            const carritoGuardado = localStorage.getItem("carrito");
+            if (carritoGuardado) {
+                setCarrito(JSON.parse(carritoGuardado));
+            }
+        }
+    }, [isAuthenticated, usuario]);
 
-  // 🔹 Guardar carrito cada vez que cambia
-  useEffect(() => {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-    const nuevoTotal = carrito.reduce(
-      (acc, item) => acc + item.precio * item.cantidad,
-      0
+    // 2. Guardar en LocalStorage solo si NO está logueado
+    useEffect(() => {
+        if (!isAuthenticated) {
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+        }
+    }, [carrito, isAuthenticated]);
+
+    // === FUNCIÓN CLAVE CORREGIDA ===
+    const cargarCarritoRemoto = async () => {
+        try {
+            // A. Traemos los IDs y cantidades de la BD
+            const res = await carritoApi.obtener(usuario.id);
+            const itemsBackend = res.data.items || [];
+
+            // B. Buscamos los detalles completos (precio, foto, nombre) en el Catálogo
+            const promesasDeDetalles = itemsBackend.map(async (item) => {
+                try {
+                    // item.urnaId viene de tu Entity ItemCarrito
+                    const respCatalogo = await catalogoApi.getUrnaById(item.urnaId);
+                    const urnaCompleta = respCatalogo.data;
+
+                    // C. Combinamos la info del producto con la cantidad que tenías guardada
+                    return {
+                        ...urnaCompleta,  // nombre, precio, imagenUrl...
+                        cantidad: item.cantidad
+                    };
+                } catch (err) {
+                    console.warn(`Producto ID ${item.urnaId} no encontrado en catálogo`, err);
+                    return null; // Si se borró del catálogo, lo ignoramos
+                }
+            });
+
+            // Esperamos a que todas las consultas terminen
+            const carritoHidratado = (await Promise.all(promesasDeDetalles)).filter(i => i !== null);
+
+            setCarrito(carritoHidratado);
+
+        } catch (error) {
+            console.error("Error sincronizando carrito remoto:", error);
+        }
+    };
+
+    // === FUNCIONES DEL CARRITO ===
+
+    const agregarAlCarrito = async (producto) => {
+        // Optimista: Actualizamos UI inmediatamente
+        setCarrito((prev) => {
+            const existe = prev.find((item) => item.id === producto.id);
+            if (existe) {
+                return prev.map((item) =>
+                    item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
+                );
+            }
+            return [...prev, { ...producto, cantidad: 1 }];
+        });
+
+        // Sincronización silenciosa con BD
+        if (isAuthenticated && usuario) {
+            try {
+                await carritoApi.agregar(usuario.id, producto.id, 1);
+            } catch (error) {
+                console.error("Error guardando en BD:", error);
+                // Opcional: Revertir estado si falla
+            }
+        }
+    };
+
+    const eliminarDelCarrito = async (id) => {
+        setCarrito((prev) => prev.filter((item) => item.id !== id));
+
+        if (isAuthenticated && usuario) {
+            try {
+                await carritoApi.eliminar(usuario.id, id);
+            } catch (error) {
+                console.error("Error eliminando de BD:", error);
+            }
+        }
+    };
+
+    const vaciarCarrito = async () => {
+        setCarrito([]);
+        if (isAuthenticated && usuario) {
+            try {
+                await carritoApi.vaciar(usuario.id);
+            } catch (error) {
+                console.error("Error vaciando BD:", error);
+            }
+        } else {
+            localStorage.removeItem("carrito");
+        }
+    };
+
+    const total = carrito.reduce((acc, item) => acc + (item.precio || 0) * item.cantidad, 0);
+    const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
+    return (
+        <CarritoContext.Provider
+            value={{
+                carrito,
+                agregarAlCarrito,
+                eliminarDelCarrito,
+                vaciarCarrito,
+                total,
+                cantidadTotal,
+            }}
+        >
+            {children}
+        </CarritoContext.Provider>
     );
-    setTotal(nuevoTotal);
-  }, [carrito]);
-
-  // 🔹 Agregar producto
-  const agregarAlCarrito = (producto) => {
-    setCarrito((prev) => {
-      const existe = prev.find((p) => p.id === producto.id);
-      if (existe) {
-        return prev.map((p) =>
-          p.id === producto.id
-            ? { ...p, cantidad: p.cantidad + producto.cantidad }
-            : p
-        );
-      } else {
-        return [...prev, producto];
-      }
-    });
-  };
-
-  // 🔹 Eliminar producto
-  const eliminarDelCarrito = (id) => {
-    setCarrito((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  // 🔹 Vaciar carrito
-  const vaciarCarrito = () => {
-    setCarrito([]);
-  };
-
-  // 🔹 Confirmar compra (enviar al backend de Pedidos)
-  const confirmarCompra = async (cliente) => {
-    if (carrito.length === 0) return alert("Tu carrito está vacío.");
-
-    try {
-      const pedido = {
-        cliente,
-        items: carrito.map((p) => ({
-          productoId: p.id,
-          nombre: p.nombre,
-          cantidad: p.cantidad,
-          precio: p.precio,
-        })),
-        total,
-        fecha: new Date().toISOString(),
-      };
-
-      const res = await axios.post("http://localhost:8005/api/pedidos", pedido);
-      if (res.status === 200 || res.status === 201) {
-        alert("✅ Pedido registrado con éxito.");
-        vaciarCarrito();
-      }
-    } catch (err) {
-      console.error("Error al enviar pedido:", err);
-      alert("Ocurrió un error al procesar tu compra.");
-    }
-  };
-
-  return (
-    <CarritoContext.Provider
-      value={{
-        carrito,
-        total,
-        agregarAlCarrito,
-        eliminarDelCarrito,
-        vaciarCarrito,
-        confirmarCompra,
-      }}
-    >
-      {children}
-    </CarritoContext.Provider>
-  );
-}
+};
