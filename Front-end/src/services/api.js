@@ -11,6 +11,7 @@ const PORTS = {
   INVENTARIO: import.meta.env.VITE_PORT_INVENTARIO || 8003,
   USUARIOS: import.meta.env.VITE_PORT_USUARIOS || 8004,
   PEDIDOS: import.meta.env.VITE_PORT_PEDIDOS || 8005,
+  SOCIAL: import.meta.env.VITE_PORT_SOCIAL || 8006
 };
 
 export const BASE = {
@@ -19,6 +20,7 @@ export const BASE = {
   INVENTARIO: `${host}:${PORTS.INVENTARIO}`,
   USUARIOS: `${host}:${PORTS.USUARIOS}`,
   PEDIDOS: `${host}:${PORTS.PEDIDOS}`,
+  SOCIAL: `${host}:${PORTS.SOCIAL}`,
 };
 
 /* =========================================
@@ -311,4 +313,14 @@ export const crearUrnaConInventario = async (payload) => {
     console.error("Error en crearUrnaConInventario:", error);
     throw error;
   }
+};
+
+/* =========================================
+   💬 SOCIAL (FORO Y RESEÑAS) (8006)
+   ========================================= */
+
+export const socialApi = {
+    getForo: () => api.get(`${BASE.SOCIAL}/api/comentarios/foro`),
+    getResenas: (urnaId) => api.get(`${BASE.SOCIAL}/api/comentarios/urna/${urnaId}`),
+    create: (data) => api.post(`${BASE.SOCIAL}/api/comentarios`, data),
 };

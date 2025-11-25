@@ -14,6 +14,7 @@ import UsuariosAdmin from "./pages/admin/UsuariosAdmin.jsx";
 import UrnasAdmin from "./pages/admin/UrnasAdmin.jsx";
 import InventarioAdmin from "./pages/admin/InventarioAdmin.jsx";
 import PedidosAdmin from "./pages/admin/PedidosAdmin.jsx";
+import {Foro} from "./pages/Foro.jsx";
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/" element={<Catalogo />} />
                 <Route path="/Catalogo" element={<Catalogo />} />
                 <Route path="/nosotros" element={<Nosotros />} />
+                <Route path="/foro" element={<Foro />} />
                 <Route path="/login" element={<Login />} />
 
                 {/* Rutas protegidas del administrador */}
