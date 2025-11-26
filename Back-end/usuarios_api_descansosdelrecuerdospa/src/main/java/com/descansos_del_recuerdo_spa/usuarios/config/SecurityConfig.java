@@ -36,7 +36,11 @@ public class SecurityConfig {
                                 "/v3/api-docs", "/v3/api-docs/**",
                                 "/api-docs", "/api-docs/**",
                                 "/swagger-resources/**", "/webjars/**",
-                                "/api/auth/**"
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password",
+                                "/api/direcciones/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

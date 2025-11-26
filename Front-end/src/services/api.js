@@ -98,6 +98,10 @@ export const usuariosApi = {
         api.post(`${BASE.USUARIOS}/api/direcciones`, data),
   updateDireccion: (id, data) =>
         api.put(`${BASE.USUARIOS}/api/direcciones/${id}`, data),
+    requestPasswordReset: (correo) =>
+        api.post(`${BASE.USUARIOS}/api/auth/forgot-password`, { correo }),
+    confirmPasswordReset: (token, password) =>
+        api.post(`${BASE.USUARIOS}/api/auth/reset-password`, { token, password }),
 };
 
 /* =========================================

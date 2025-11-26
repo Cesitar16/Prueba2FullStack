@@ -16,6 +16,9 @@ import InventarioAdmin from "./pages/admin/InventarioAdmin.jsx";
 import PedidosAdmin from "./pages/admin/PedidosAdmin.jsx";
 import {Foro} from "./pages/Foro.jsx";
 import { UserProfile } from "./pages/UserProfile";
+import {Register} from "./pages/Register.jsx";
+import {ForgotPassword} from "./pages/ForgotPassword.jsx";
+import {ResetPassword} from "./pages/ResetPassword.jsx";
 
 function App() {
     return (
@@ -28,6 +31,9 @@ function App() {
                     <Route path="/nosotros" element={<Nosotros />} />
                     <Route path="/foro" element={<Foro />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/registro" element={<Register />} />
+                    <Route path="/recuperar-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
                     {/* Nueva Ruta de Perfil */}
                     <Route

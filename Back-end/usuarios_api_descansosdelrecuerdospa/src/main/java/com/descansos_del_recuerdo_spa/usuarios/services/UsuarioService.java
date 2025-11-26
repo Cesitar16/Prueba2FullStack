@@ -14,4 +14,6 @@ public interface UsuarioService {
     void changePassword(Long id, String newPassword);
     void delete(Long id);
     Usuario save(Usuario usuario);
+    void solicitarRecuperacionPassword(String correo);
+    void procesarRecuperacionPassword(String token, String nuevaPassword);
 }
