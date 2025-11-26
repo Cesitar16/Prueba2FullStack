@@ -4,15 +4,14 @@ import com.descansos_del_recuerdo_spa.pedidos.entities.*;
 import com.descansos_del_recuerdo_spa.pedidos.entities.dto.*;
 import com.descansos_del_recuerdo_spa.pedidos.repositories.*;
 import com.descansos_del_recuerdo_spa.pedidos.services.*;
-import com.descansos_del_recuerdo_spa.pedidos.services.client.InventarioClientService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,37 +24,55 @@ public class PedidoServiceImpl implements PedidoService {
     @Transactional
     @Override
     public PedidoResponseDTO crearPedido(PedidoRequestDTO req) {
+        // 1. Validar Estado
         EstadoPedido estado = estadoPedidoRepository.findById(req.getEstadoPedidoId())
-                .orElseThrow(() -> new EntityNotFoundException("Estado de pedido no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Estado no encontrado"));
 
+        // 2. Construir entidad base
         Pedido pedido = Pedido.builder()
                 .usuarioId(req.getUsuarioId())
                 .direccionId(req.getDireccionId())
                 .estadoPedido(estado)
                 .fechaPedido(LocalDateTime.now())
-                .total(BigDecimal.ZERO)
                 .build();
 
-        pedido = pedidoRepository.save(pedido);
+        // 3. Procesar Detalles y Calcular Total Neto
+        // OJO: Aquí asumimos que el precioUnitario viene del request.
+        // Idealmente deberías validarlo contra el ms-catalogo, pero para este paso confiamos en el item.
+        BigDecimal sumaNeto = BigDecimal.ZERO;
 
-        BigDecimal total = BigDecimal.ZERO;
-        for (DetallePedidoDTO d : req.getDetalles()) {
-            BigDecimal linea = d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad()));
-            total = total.add(linea);
+        List<DetallePedido> detalles = req.getDetalles().stream().map(d -> {
+            // Calculamos subtotal por item
+            BigDecimal subtotalItem = d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad()));
 
-            DetallePedido det = DetallePedido.builder()
+            return DetallePedido.builder()
                     .pedido(pedido)
                     .urnaId(d.getUrnaId())
                     .cantidad(d.getCantidad())
                     .precioUnitario(d.getPrecioUnitario())
-                    .build(); // subtotal lo calcula la BD (columna generada)
-            detallePedidoRepository.save(det);
+                    // .subtotal(subtotalItem) // Si tuvieras columna subtotal en BD
+                    .build();
+        }).toList();
+
+        // Sumar todos los subtotales
+        for (DetallePedido d : detalles) {
+            BigDecimal sub = d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad()));
+            sumaNeto = sumaNeto.add(sub);
         }
 
-        pedido.setTotal(total);
-        pedidoRepository.save(pedido);
+        // 4. APLICAR IVA (19%) EN EL BACKEND
+        // Total = Neto * 1.19
+        BigDecimal totalConIva = sumaNeto.multiply(new BigDecimal("1.19"));
 
-        return toResponse(pedido);
+        // Redondear a 0 decimales (Pesos Chilenos no usan centavos) o 2 según tu preferencia
+        pedido.setTotal(totalConIva.setScale(0, RoundingMode.HALF_UP));
+
+        pedido.setDetalles(detalles);
+
+        // 5. Guardar (Cascada guarda los detalles)
+        Pedido guardado = pedidoRepository.save(pedido);
+
+        return toResponse(guardado);
     }
 
     @Transactional
@@ -101,5 +118,14 @@ public class PedidoServiceImpl implements PedidoService {
                 .total(pedido.getTotal())
                 .detalles(dets)
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true) // Opcional: mejora rendimiento en lecturas
+    public List<PedidoResponseDTO> listarPorUsuario(Long usuarioId) {
+        return pedidoRepository.findByUsuarioId(usuarioId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }

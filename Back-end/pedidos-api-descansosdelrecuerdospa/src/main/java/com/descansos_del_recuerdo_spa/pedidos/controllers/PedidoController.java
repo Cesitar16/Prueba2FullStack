@@ -56,4 +56,9 @@ public class PedidoController {
                         .build())
                 .toList();
     }
+
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<List<PedidoResponseDTO>> listarPorUsuario(@PathVariable Long id) {
+        return ResponseEntity.ok(pedidoService.listarPorUsuario(id));
+    }
 }
