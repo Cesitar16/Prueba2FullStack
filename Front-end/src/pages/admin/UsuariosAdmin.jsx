@@ -10,6 +10,10 @@ export default function UsuariosAdmin() {
     const [loading, setLoading] = useState(true);
     const [q, setQ] = useState("");
 
+    // ====== PAGINACIÓN ======
+    const [paginaActual, setPaginaActual] = useState(1);
+    const itemsPorPagina = 10;
+
     // Estados CRUD
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
@@ -23,6 +27,11 @@ export default function UsuariosAdmin() {
         return s ? data.filter(u => `${u.nombre} ${u.correo} ${u.rol} ${u.estado}`.toLowerCase().includes(s)) : data;
     }, [q, data]);
 
+    // Reiniciar página al filtrar
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [q]);
+
     const load = async () => {
         setLoading(true);
         try {
@@ -33,6 +42,16 @@ export default function UsuariosAdmin() {
     };
 
     useEffect(() => { load(); }, []);
+
+    // Lógica de Paginación
+    const indiceUltimoItem = paginaActual * itemsPorPagina;
+    const indicePrimerItem = indiceUltimoItem - itemsPorPagina;
+    const itemsActuales = filtrados.slice(indicePrimerItem, indiceUltimoItem);
+    const totalPaginas = Math.ceil(filtrados.length / itemsPorPagina);
+
+    const cambiarPagina = (n) => {
+        if (n >= 1 && n <= totalPaginas) setPaginaActual(n);
+    };
 
     const onChange = e => setForm(f => ({...f, [e.target.name]: e.target.value}));
 
@@ -79,11 +98,7 @@ export default function UsuariosAdmin() {
                 <h3 className="mb-0 fw-bold" style={{ color: 'var(--color-principal)', fontFamily: 'Playfair Display, serif' }}>
                     👤 Gestión de Usuarios
                 </h3>
-                <Button
-                    variant=""
-                    className="btn-brand shadow-sm"
-                    onClick={openCreateModal}
-                >
+                <Button variant="" className="btn-brand shadow-sm" onClick={openCreateModal}>
                     <i className="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
                 </Button>
             </div>
@@ -112,7 +127,7 @@ export default function UsuariosAdmin() {
                         </tr>
                         </thead>
                         <tbody>
-                        {filtrados.map(u=>(
+                        {itemsActuales.map(u=>(
                             <tr key={u.id}>
                                 <td className="ps-3 fw-semibold text-muted">{u.id}</td>
                                 <td className="fw-medium">{u.nombre}</td>
@@ -131,19 +146,10 @@ export default function UsuariosAdmin() {
                                     </Badge>
                                 </td>
                                 <td className="text-end pe-3" style={{width: '180px'}}>
-                                    <Button
-                                        variant=""
-                                        size="sm"
-                                        className="btn-brand-outline me-2"
-                                        onClick={()=>openEditModal(u)}
-                                    >
+                                    <Button variant="" size="sm" className="btn-brand-outline me-2" onClick={()=>openEditModal(u)}>
                                         <i className="bi bi-pencil"></i>
                                     </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        size="sm"
-                                        onClick={()=>openDelete(u)}
-                                    >
+                                    <Button variant="outline-danger" size="sm" onClick={()=>openDelete(u)}>
                                         <i className="bi bi-trash"></i>
                                     </Button>
                                 </td>
@@ -154,7 +160,44 @@ export default function UsuariosAdmin() {
                 </div>
             )}
 
-            {/* Create Modal */}
+            {/* ===== PAGINACIÓN CORPORATIVA ===== */}
+            {filtrados.length > 0 && (
+                <div className="d-flex justify-content-center gap-2 mt-4 pb-4">
+                    <Button
+                        variant=""
+                        className="btn-brand-outline"
+                        onClick={() => cambiarPagina(paginaActual - 1)}
+                        disabled={paginaActual === 1}
+                        size="sm"
+                    >
+                        ← Anterior
+                    </Button>
+
+                    {[...Array(totalPaginas)].map((_, index) => (
+                        <Button
+                            key={index + 1}
+                            variant=""
+                            className={index + 1 === paginaActual ? "btn-brand" : "btn-brand-outline"}
+                            onClick={() => cambiarPagina(index + 1)}
+                            size="sm"
+                        >
+                            {index + 1}
+                        </Button>
+                    ))}
+
+                    <Button
+                        variant=""
+                        className="btn-brand-outline"
+                        onClick={() => cambiarPagina(paginaActual + 1)}
+                        disabled={paginaActual === totalPaginas}
+                        size="sm"
+                    >
+                        Siguiente →
+                    </Button>
+                </div>
+            )}
+
+            {/* Modals (Sin cambios) */}
             <AdminModal open={openCreate} title="Nuevo usuario" onClose={()=>setOpenCreate(false)} onSubmit={createUser} submitText="Crear">
                 <Form>
                     <Form.Group className="mb-3">
@@ -167,18 +210,8 @@ export default function UsuariosAdmin() {
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Contraseña</Form.Label>
-                        <Form.Control
-                            type="password"
-                            name="password"
-                            value={form.password}
-                            onChange={onChange}
-                            required
-                            minLength={8} // 👈 Agrega esta validación nativa HTML
-                            placeholder="Mínimo 8 caracteres"
-                        />
-                        <Form.Text className="text-muted">
-                            Debe tener al menos 8 caracteres.
-                        </Form.Text>
+                        <Form.Control type="password" name="password" value={form.password} onChange={onChange} required minLength={8} placeholder="Mínimo 8 caracteres" />
+                        <Form.Text className="text-muted">Debe tener al menos 8 caracteres.</Form.Text>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Rol</Form.Label>
@@ -190,7 +223,6 @@ export default function UsuariosAdmin() {
                 </Form>
             </AdminModal>
 
-            {/* Edit Modal */}
             <AdminModal open={openEdit} title={`Editar usuario #${sel?.id}`} onClose={()=>{setOpenEdit(false); setSel(null);}} onSubmit={updateUser}>
                 <Form>
                     <Form.Group className="mb-3">

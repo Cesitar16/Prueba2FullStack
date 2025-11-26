@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Table, Button, Form, Badge, InputGroup } from "react-bootstrap";
+import {Container, Table, Button, Form, Badge, InputGroup, Row, Col} from "react-bootstrap";
 import { api, BASE } from "../../services/api";
 import AdminModal from "../../components/admin/common/AdminModal.jsx";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
@@ -9,6 +9,10 @@ export default function InventarioAdmin() {
     const [rows, setRows] = useState([]);
     const [q, setQ] = useState("");
     const [loading, setLoading] = useState(true);
+
+    // ====== PAGINACIÓN ======
+    const [paginaActual, setPaginaActual] = useState(1);
+    const itemsPorPagina = 10;
 
     const [openC, setOpenC] = useState(false);
     const [openE, setOpenE] = useState(false);
@@ -31,10 +35,26 @@ export default function InventarioAdmin() {
     };
     useEffect(()=>{ load(); },[]);
 
+    // Filtrado
     const list = useMemo(()=>{
         const s = q.trim().toLowerCase();
         return s ? rows.filter(r => `${r.urnaId} ${r.ubicacionFisica} ${r.estado}`.toLowerCase().includes(s)) : rows;
     },[q, rows]);
+
+    // Reiniciar a página 1 si cambia el filtro
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [q]);
+
+    // Lógica de Paginación
+    const indiceUltimoItem = paginaActual * itemsPorPagina;
+    const indicePrimerItem = indiceUltimoItem - itemsPorPagina;
+    const itemsActuales = list.slice(indicePrimerItem, indiceUltimoItem);
+    const totalPaginas = Math.ceil(list.length / itemsPorPagina);
+
+    const cambiarPagina = (n) => {
+        if (n >= 1 && n <= totalPaginas) setPaginaActual(n);
+    };
 
     // --- ACCIONES ---
     const openCreate = ()=>{ setF({ urnaId:"", cantidadActual:0, cantidadMinima:0, cantidadMaxima:0, ubicacionFisica:"", estado:"Disponible" }); setOpenC(true); };
@@ -86,7 +106,6 @@ export default function InventarioAdmin() {
         finally { setOpenD(false); setSel(null); }
     };
 
-    // Helper para badge de estado
     const getBadgeVariant = (r) => {
         if (r.cantidadActual === 0) return "secondary";
         if (r.cantidadActual <= r.cantidadMinima) return "warning";
@@ -105,11 +124,7 @@ export default function InventarioAdmin() {
                 <h3 className="mb-0 fw-bold" style={{ color: 'var(--color-principal)', fontFamily: 'Playfair Display, serif' }}>
                     📦 Gestión de Inventario
                 </h3>
-                <Button
-                    variant=""
-                    className="btn-brand shadow-sm"
-                    onClick={openCreate}
-                >
+                <Button variant="" className="btn-brand shadow-sm" onClick={openCreate}>
                     <i className="bi bi-plus-lg me-2"></i>Nuevo Registro
                 </Button>
             </div>
@@ -144,7 +159,7 @@ export default function InventarioAdmin() {
                         </tr>
                         </thead>
                         <tbody>
-                        {list.map(r=>(
+                        {itemsActuales.map(r=>(
                             <tr key={r.id}>
                                 <td className="ps-3 fw-semibold text-muted">{r.id}</td>
                                 <td className="text-center fw-bold text-dark">{r.urnaId}</td>
@@ -165,29 +180,20 @@ export default function InventarioAdmin() {
                                     </Badge>
                                 </td>
                                 <td className="text-end pe-3" style={{width: '180px'}}>
-                                    <Button
-                                        variant=""
-                                        size="sm"
-                                        className="btn-brand-outline me-2"
-                                        onClick={()=>openEdit(r)}
-                                    >
+                                    <Button variant="" size="sm" className="btn-brand-outline me-2" onClick={()=>openEdit(r)}>
                                         <i className="bi bi-pencil"></i>
                                     </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        size="sm"
-                                        onClick={()=>openDelete(r)}
-                                    >
+                                    <Button variant="outline-danger" size="sm" onClick={()=>openDelete(r)}>
                                         <i className="bi bi-trash"></i>
                                     </Button>
                                 </td>
                             </tr>
                         ))}
-                        {!list.length && (
+                        {!itemsActuales.length && (
                             <tr>
                                 <td colSpan={7} className="text-center py-5 text-muted">
                                     <i className="bi bi-box2 display-4 d-block mb-3 opacity-50"></i>
-                                    No hay registros en el inventario.
+                                    No hay registros que coincidan.
                                 </td>
                             </tr>
                         )}
@@ -196,7 +202,44 @@ export default function InventarioAdmin() {
                 </div>
             )}
 
-            {/* === MODAL CREAR === */}
+            {/* ===== PAGINACIÓN CORPORATIVA ===== */}
+            {list.length > 0 && (
+                <div className="d-flex justify-content-center gap-2 mt-4 pb-4">
+                    <Button
+                        variant=""
+                        className="btn-brand-outline"
+                        onClick={() => cambiarPagina(paginaActual - 1)}
+                        disabled={paginaActual === 1}
+                        size="sm"
+                    >
+                        ← Anterior
+                    </Button>
+
+                    {[...Array(totalPaginas)].map((_, index) => (
+                        <Button
+                            key={index + 1}
+                            variant=""
+                            className={index + 1 === paginaActual ? "btn-brand" : "btn-brand-outline"}
+                            onClick={() => cambiarPagina(index + 1)}
+                            size="sm"
+                        >
+                            {index + 1}
+                        </Button>
+                    ))}
+
+                    <Button
+                        variant=""
+                        className="btn-brand-outline"
+                        onClick={() => cambiarPagina(paginaActual + 1)}
+                        disabled={paginaActual === totalPaginas}
+                        size="sm"
+                    >
+                        Siguiente →
+                    </Button>
+                </div>
+            )}
+
+            {/* === MODALES (Sin cambios) === */}
             <AdminModal open={openC} title="Nuevo inventario" onClose={()=>setOpenC(false)} onSubmit={createItem} submitText="Crear">
                 <Form>
                     <Row className="g-3">
@@ -244,7 +287,6 @@ export default function InventarioAdmin() {
                 </Form>
             </AdminModal>
 
-            {/* === MODAL EDITAR === */}
             <AdminModal open={openE} title={`Editar inventario #${sel?.id}`} onClose={()=>{setOpenE(false); setSel(null);}} onSubmit={updateItem}>
                 <Form>
                     <Row className="g-3">
@@ -292,7 +334,6 @@ export default function InventarioAdmin() {
                 </Form>
             </AdminModal>
 
-            {/* === DIALOGO ELIMINAR === */}
             <ConfirmDialog
                 open={openD}
                 title="Eliminar registro"

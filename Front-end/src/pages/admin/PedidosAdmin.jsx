@@ -21,12 +21,16 @@ export default function PedidosAdmin() {
     const [loading, setLoading] = useState(true);
     const [q, setQ] = useState("");
 
+    // ====== PAGINACIÓN ======
+    const [paginaActual, setPaginaActual] = useState(1);
+    const itemsPorPagina = 10;
+
     const [openE, setOpenE] = useState(false);
     const [openD, setOpenD] = useState(false);
     const [sel, setSel] = useState(null);
     const [estado, setEstado] = useState("Pendiente");
 
-    // Carga + hidratación de nombre de cliente
+    // Carga + hidratación
     const loadAndHydrate = async () => {
         setLoading(true);
         try {
@@ -67,6 +71,7 @@ export default function PedidosAdmin() {
         return () => window.removeEventListener("pedido:nuevo", onNuevo);
     }, []);
 
+    // Filtrado
     const list = useMemo(() => {
         const s = q.trim().toLowerCase();
         if (!s) return rows;
@@ -74,6 +79,21 @@ export default function PedidosAdmin() {
             `${p.id} ${p.clienteNombre || ""} ${p.estado || ""}`.toLowerCase().includes(s)
         );
     }, [q, rows]);
+
+    // Reiniciar paginación al filtrar
+    useEffect(() => {
+        setPaginaActual(1);
+    }, [q]);
+
+    // Lógica de Paginación
+    const indiceUltimoItem = paginaActual * itemsPorPagina;
+    const indicePrimerItem = indiceUltimoItem - itemsPorPagina;
+    const itemsActuales = list.slice(indicePrimerItem, indiceUltimoItem);
+    const totalPaginas = Math.ceil(list.length / itemsPorPagina);
+
+    const cambiarPagina = (n) => {
+        if (n >= 1 && n <= totalPaginas) setPaginaActual(n);
+    };
 
     const openEdit = (r) => {
         setSel(r);
@@ -114,7 +134,6 @@ export default function PedidosAdmin() {
         }
     };
 
-    // Helper para colores de badge (Adaptados a la paleta si se desea, o mantener funcionales)
     const getBadgeVariant = (estado) => {
         switch (estado) {
             case "Entregado": return "success";
@@ -136,14 +155,14 @@ export default function PedidosAdmin() {
 
     return (
         <Container fluid>
-            {/* Header con estilo corporativo */}
+            {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h3 className="mb-0 fw-bold" style={{ color: 'var(--color-principal)', fontFamily: 'Playfair Display, serif' }}>
                     🧾 Gestión de Pedidos
                 </h3>
             </div>
 
-            {/* Buscador con estilo limpio */}
+            {/* Buscador */}
             <InputGroup className="mb-4 shadow-sm">
                 <InputGroup.Text className="bg-white border-end-0 text-muted"><i className="bi bi-search"></i></InputGroup.Text>
                 <Form.Control
@@ -162,7 +181,6 @@ export default function PedidosAdmin() {
             ) : (
                 <div className="table-responsive shadow-sm rounded">
                     <Table hover bordered className="align-middle bg-white mb-0">
-                        {/* Encabezado color Madera */}
                         <thead className="text-white" style={{ backgroundColor: 'var(--color-principal)' }}>
                         <tr>
                             <th className="py-3 ps-3">ID</th>
@@ -174,7 +192,7 @@ export default function PedidosAdmin() {
                         </tr>
                         </thead>
                         <tbody>
-                        {list.map((p) => (
+                        {itemsActuales.map((p) => (
                             <tr key={p.id}>
                                 <td className="ps-3 fw-bold text-muted">#{p.id}</td>
                                 <td className="fw-medium">{p.clienteNombre || "-"}</td>
@@ -186,29 +204,20 @@ export default function PedidosAdmin() {
                                     </Badge>
                                 </td>
                                 <td className="text-end pe-3" style={{width: '200px'}}>
-                                    <Button
-                                        variant=""
-                                        size="sm"
-                                        className="btn-brand-outline me-2"
-                                        onClick={() => openEdit(p)}
-                                    >
+                                    <Button variant="" size="sm" className="btn-brand-outline me-2" onClick={() => openEdit(p)}>
                                         <i className="bi bi-pencil me-1"></i> Estado
                                     </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        size="sm"
-                                        onClick={() => openDelete(p)}
-                                    >
+                                    <Button variant="outline-danger" size="sm" onClick={() => openDelete(p)}>
                                         <i className="bi bi-trash"></i>
                                     </Button>
                                 </td>
                             </tr>
                         ))}
-                        {!list.length && (
+                        {!itemsActuales.length && (
                             <tr>
                                 <td colSpan={6} className="text-center py-5 text-muted">
                                     <i className="bi bi-receipt-cutoff display-4 d-block mb-3 opacity-50"></i>
-                                    No hay pedidos que coincidan con la búsqueda.
+                                    No hay pedidos que coincidan.
                                 </td>
                             </tr>
                         )}
@@ -217,7 +226,44 @@ export default function PedidosAdmin() {
                 </div>
             )}
 
-            {/* Cambiar estado */}
+            {/* ===== PAGINACIÓN CORPORATIVA ===== */}
+            {list.length > 0 && (
+                <div className="d-flex justify-content-center gap-2 mt-4 pb-4">
+                    <Button
+                        variant=""
+                        className="btn-brand-outline"
+                        onClick={() => cambiarPagina(paginaActual - 1)}
+                        disabled={paginaActual === 1}
+                        size="sm"
+                    >
+                        ← Anterior
+                    </Button>
+
+                    {[...Array(totalPaginas)].map((_, index) => (
+                        <Button
+                            key={index + 1}
+                            variant=""
+                            className={index + 1 === paginaActual ? "btn-brand" : "btn-brand-outline"}
+                            onClick={() => cambiarPagina(index + 1)}
+                            size="sm"
+                        >
+                            {index + 1}
+                        </Button>
+                    ))}
+
+                    <Button
+                        variant=""
+                        className="btn-brand-outline"
+                        onClick={() => cambiarPagina(paginaActual + 1)}
+                        disabled={paginaActual === totalPaginas}
+                        size="sm"
+                    >
+                        Siguiente →
+                    </Button>
+                </div>
+            )}
+
+            {/* Modals (Sin cambios) */}
             <AdminModal
                 open={openE}
                 title={`Actualizar estado pedido #${sel?.id}`}
@@ -228,11 +274,7 @@ export default function PedidosAdmin() {
                 <Form>
                     <Form.Group className="mb-3">
                         <Form.Label className="fw-bold text-secondary">Estado del Pedido</Form.Label>
-                        <Form.Select
-                            value={estado}
-                            onChange={(e) => setEstado(e.target.value)}
-                            className="form-select-lg"
-                        >
+                        <Form.Select value={estado} onChange={(e) => setEstado(e.target.value)} className="form-select-lg">
                             {ESTADOS.map((e) => (
                                 <option key={e.id} value={e.label}>{e.label}</option>
                             ))}
@@ -241,7 +283,6 @@ export default function PedidosAdmin() {
                 </Form>
             </AdminModal>
 
-            {/* Eliminar */}
             <ConfirmDialog
                 open={openD}
                 title="Eliminar pedido"
