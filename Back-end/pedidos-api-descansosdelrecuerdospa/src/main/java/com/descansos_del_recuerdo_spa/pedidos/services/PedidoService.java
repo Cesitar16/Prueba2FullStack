@@ -9,4 +9,5 @@ public interface PedidoService {
     void actualizarEstado(Long pedidoId, Long estadoId);
     void eliminar(Long id);
     List<PedidoResponseDTO> listar();
+    List<PedidoResponseDTO> listarPorUsuario(Long usuarioId);
 }

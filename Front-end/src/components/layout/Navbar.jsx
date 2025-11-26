@@ -66,10 +66,14 @@ export function Navbar() {
                     <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0">
                         {isAuthenticated ? (
                             <>
-                                <span className="text-white-50 fw-medium d-flex align-items-center gap-2">
+                                <Link
+                                    to="/perfil"
+                                    className="text-white-50 fw-medium d-flex align-items-center gap-2 text-decoration-none hover-dorado"
+                                >
                                     <i className="bi bi-person-circle fs-5"></i>
-                                    {usuario?.nombre || "Usuario"}
-                                </span>
+                                    {/* Mostramos primer nombre para que no sea tan largo */}
+                                    {usuario?.nombre?.split(" ")[0] || "Mi Cuenta"}
+                                </Link>
                                 <Button
                                     variant="outline-light"
                                     size="sm"
