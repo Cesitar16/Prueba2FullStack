@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { Form, Button, FloatingLabel, Alert } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import "../assets/styles/login.css";
@@ -110,8 +110,17 @@ export function Login() {
                     </Button>
                 </Form>
 
-                <div className="forgot-password">
-                    <a href="#">¿Olvidaste tu contraseña?</a>
+                <div className="text-center mt-4">
+                    <div className="forgot-password mb-2">
+                        <Link to="/recuperar-password">¿Olvidaste tu contraseña?</Link>
+                    </div>
+                    <hr className="my-3 opacity-25"/>
+                    <div className="small">
+                        <span className="text-muted me-2">¿Aún no tienes cuenta?</span>
+                        <Link to="/registro" className="fw-bold text-principal text-decoration-none">
+                            Regístrate gratis
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

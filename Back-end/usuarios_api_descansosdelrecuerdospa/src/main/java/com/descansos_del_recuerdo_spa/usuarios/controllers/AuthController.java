@@ -8,6 +8,7 @@ import com.descansos_del_recuerdo_spa.usuarios.entities.Usuario;
 import com.descansos_del_recuerdo_spa.usuarios.security.JwtUtils;
 import com.descansos_del_recuerdo_spa.usuarios.services.UsuarioService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -71,5 +72,40 @@ public class AuthController {
                 .correo(u.getCorreo()).rol(u.getRol())
                 .estado(u.getEstado()).fechaCreacion(u.getFechaCreacion()).build();
         return ResponseEntity.ok(dto);
+    }
+
+    // ============================================================
+    //  ENDPOINTS DE RECUPERACIÓN
+    // ============================================================
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String correo = request.get("correo");
+        if (correo == null || correo.isEmpty()) {
+            return ResponseEntity.badRequest().body("El correo es obligatorio");
+        }
+
+        usuarioService.solicitarRecuperacionPassword(correo);
+
+        // Respondemos OK genérico por seguridad (evita enumeración de usuarios)
+        return ResponseEntity.ok(Map.of("message", "Si el correo existe, se han enviado las instrucciones."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String nuevaPassword = request.get("password");
+
+        if (token == null || nuevaPassword == null) {
+            return ResponseEntity.badRequest().body("Token y nueva contraseña son obligatorios");
+        }
+
+        try {
+            usuarioService.procesarRecuperacionPassword(token, nuevaPassword);
+            return ResponseEntity.ok(Map.of("message", "Contraseña actualizada exitosamente"));
+        } catch (RuntimeException e) {
+            // Si el token expiró o es falso, devolvemos 401 Unauthorized
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
+        }
     }
 }
